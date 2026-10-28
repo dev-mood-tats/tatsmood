@@ -1,0 +1,93 @@
+/* Todas las transiciones de la web duran 0,3 s.
+   Efecto de entrada de las imágenes (copiado de tatsmood.com): en escritorio empiezan
+   transparentes y desenfocadas y aparecen al entrar en pantalla (components/RevealImages.tsx
+   les pone "in-view"). Las fotos grandes de cabecera (colecciones de la home y de las
+   páginas de colección, fotos del resumen del pedido: clase "no-reveal") salen directamente. Igual que en la web real,
+   las fotos de las tarjetas de producto no llevan el efecto (se excluyen sin tocar su opacidad, que usa el cambio de foto al
+   pasar el ratón).
+   Los bloques de texto llevan solo el fundido de opacidad: clase "reveal" en el bloque, o
+   "reveal-children" en el contenedor para que cada hijo aparezca por separado (textos
+   largos como FAQs o los legales). */
+@media (min-width: 1024px) {
+  main img:not(.product-card img):not(.no-reveal) {
+    opacity: 0;
+    filter: blur(20px);
+    transition:
+      opacity 0.3s,
+      filter 0.3s;
+  }
+  /* Al final "filter: none" (no blur(0)), así no queda un filtro activo en la foto. */
+  main img.in-view:not(.product-card img):not(.no-reveal) {
+    opacity: 1;
+    filter: none;
+    /* Un poco después de entrar en pantalla, para que se vea el efecto. */
+    transition-delay: 0.4s;
+  }
+  /* La primera foto de la ficha de producto aparece sin esperar: es lo primero que se ve. */
+  main img.in-view.reveal-now:not(.product-card img):not(.no-reveal) {
+    transition-delay: 0s;
+  }
+
+  /* Bloques de texto: solo fundido de opacidad, sin retardo (para que la información
+     salga en cuanto llega). */
+  .reveal,
+  .reveal-children > * {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .reveal.in-view,
+  .reveal-children > .in-view {
+    opacity: 1;
+  }
+}
+
+/* Tarjetas de producto, como en palomawool.com/collections/dry:
+   - solo en la tienda, al cambiar de filtro: suben 2rem con un fundido (0,6 s, curva
+     "ease-out-slow"), escalonadas 75 ms entre una y otra;
+   - al pasar el ratón, la segunda foto aparece al instante y, al quitarlo, se va con
+     un fundido de 0,4 s. */
+@keyframes card-slide-in {
+  from {
+    transform: translateY(2rem);
+    opacity: 0.01;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card-appear {
+    opacity: 0.01;
+    animation: card-slide-in 0.6s cubic-bezier(0, 0, 0.3, 1) forwards;
+    animation-delay: calc(var(--appear-order, 0) * 75ms);
+  }
+}
+.card-hover-img {
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+/* Al entrar con el ratón el cambio de foto es instantáneo; el fundido solo se ve al
+   salir (igual que en palomawool.com). */
+.group:hover .card-hover-img {
+  transition-duration: 0s;
+}
+
+/* Rejillas de 2 columnas en móvil: si el número de tarjetas es impar, la última
+   queda sola en su fila y se centra horizontalmente (mismo ancho que una columna). */
+@media (max-width: 1023px) {
+  .odd-center > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 7.5px);
+  }
+}
+
+/* Lookbook de las colecciones en escritorio: todas las filas con el mismo ancho, el 64% de
+   la pantalla y centradas (del 18% al 82%), lejos de «Search · Menu · Cart» de la cabecera.
+   Mismo valor que LOOKBOOK_WIDTH_VW en lib/collections.ts. */
+@media (min-width: 1024px) {
+  .lookbook {
+    width: 64%;
+    margin-inline: auto;
+  }
+}

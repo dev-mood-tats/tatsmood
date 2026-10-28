@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/*
+ * Paleta y tipografía de tatsmood, copiadas tal cual del Kit global de Elementor
+ * de la web original (wp-content/uploads/elementor/css/post-13.css):
+ * blanco/negro puros + 3 grises de apoyo, tipografía Inter Tight a 12px/300.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted: #b9b9b9;
+  --line: #e9e5e5;
+  --accent: #000000;
+  --surface: #f4f4f4;
+  --font-sans: var(--font-inter-tight), "Inter Tight", sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-surface: var(--surface);
+
+  --font-sans: var(--font-inter-tight), sans-serif;
+
+  /* Toda la web usa el mismo tamaño de texto (12px/17px), igual que el sitio original:
+     la jerarquía visual viene del peso, el tracking y el layout, no del tamaño. */
+  --text-xs: 12px;
+  --text-xs--line-height: 17px;
+  --text-sm: 12px;
+  --text-sm--line-height: 17px;
+  --text-base: 12px;
+  --text-base--line-height: 17px;
+  --text-lg: 12px;
+  --text-lg--line-height: 17px;
+  --text-xl: 12px;
+  --text-xl--line-height: 17px;
+  --text-2xl: 12px;
+  --text-2xl--line-height: 17px;
+  --text-3xl: 12px;
+  --text-3xl--line-height: 17px;
+  --text-4xl: 12px;
+  --text-4xl--line-height: 17px;
+  --text-5xl: 12px;
+  --text-5xl--line-height: 17px;
+  --text-6xl: 12px;
+  --text-6xl--line-height: 17px;
+  --text-7xl: 12px;
+  --text-7xl--line-height: 17px;
+}
+
+/* Inter Tight (next/font, ver app/layout.tsx) en toda la web. Se pone aquí directamente
+   porque la utilidad font-sans de Tailwind no estaba resolviendo la variable y la web
+   salía con la fuente del sistema. Botones y campos la heredan (preflight: font: inherit). */
+html {
+  font-family: var(--font-inter-tight), "Inter Tight", sans-serif;
+}
+
+body {
+  font-family: var(--font-inter-tight), "Inter Tight", sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 17px;
+}
+
+/* Texto que viene del editor de WordPress (descripciones de producto). */
+.wp-content p {
+  margin-bottom: 1em;
+}
+.wp-content ul {
+  list-style: disc;
+  padding-left: 1.25em;
+  margin-bottom: 1em;
+}
+.wp-content strong {
+  font-weight: 600;
+}
+
+/* Tailwind v4 deja los botones con el cursor por defecto: en la web todo lo que se
+   puede pulsar lleva la manita. Lo desactivado, en cambio, muestra que no se puede. */
+button:not(:disabled),
+[role="button"],
+summary,
+select,
+label[for],
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}

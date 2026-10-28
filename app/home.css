@@ -1,0 +1,9 @@
+/* Footer encima de la foto final de la home (components/HomeClosing.tsx), en blanco.
+   Solo cuando la home está en pantalla (components/HomeFooterFlag.tsx marca el body). */
+body[data-home-closing] .site-footer {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 10;
+  color: #fff;
+}
