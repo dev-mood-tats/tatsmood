@@ -1,7 +1,7 @@
 
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+
 
 export async function GET() {
   const url = "https://wp.dev-hillhere.de/wp-json/";
