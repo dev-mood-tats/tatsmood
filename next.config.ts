@@ -1,3 +1,4 @@
+
 import type { NextConfig } from "next";
 
 // Imágenes "a lo Next.js": WordPress guarda solo el original y Next.js genera bajo demanda
@@ -23,9 +24,7 @@ const nextConfig: NextConfig = {
       { source: "/politica-de-cookies-ue", destination: "/cookie-policy", permanent: true },
       { source: "/shop", destination: "/store", permanent: true },
       { source: "/cart", destination: "/", permanent: true },
-      // WordPress vive en su propio (sub)dominio (WOOCOMMERCE_URL). Lo que antes estaba en
-      // tatsmood.com se manda allí: las fotos (enlazadas desde Google Imágenes o correos ya
-      // enviados) y el escritorio de WordPress, para quien entre por costumbre.
+      // WordPress vive en su propio (sub)dominio (WOOCOMMERCE_URL).
       { source: "/wp-content/:path*", destination: `${wpUrl.origin}/wp-content/:path*`, permanent: true },
       { source: "/wp-admin", destination: `${wpUrl.origin}/wp-admin/`, permanent: false },
       { source: "/wp-admin/:path*", destination: `${wpUrl.origin}/wp-admin/:path*`, permanent: false },
@@ -43,15 +42,11 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // Solo se permite una calidad: cualquier <Image> se sirve al 85 %.
+    // PRUEBA TEMPORAL: desactiva el optimizador de imágenes de Next.js.
+    unoptimized: true,
     qualities: [IMAGE_QUALITY],
     formats: ["image/webp"],
-    // Anchos que puede generar Next. Hasta 3200 px: las fotos de cabecera en móvil se
-    // recortan mucho (una foto apaisada en una caja vertical se ve 3-4 veces más ancha que
-    // la pantalla) y en pantallas de alta densidad necesitan ese ancho para verse nítidas.
-    // Next nunca agranda una foto por encima de su tamaño original.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560, 3200],
-    // Una vez generada, cada versión se reutiliza durante 30 días.
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
@@ -61,9 +56,6 @@ const nextConfig: NextConfig = {
         pathname: "/wp-content/uploads/**",
       },
     ],
-    // tatsmood.local (LocalWP) apunta a una IP local, que Next.js bloquea por seguridad.
-    // Solo se permite mientras WordPress sea el local (.local), también al probar el build
-    // con "npm start"; con el WordPress real (dominio público) queda desactivado solo.
     dangerouslyAllowLocalIP: wpUrl.hostname.endsWith(".local"),
   },
 };
