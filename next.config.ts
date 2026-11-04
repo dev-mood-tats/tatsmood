@@ -34,14 +34,6 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
   images: {
     // Solo se permite una calidad: cualquier <Image> se sirve al 85 %.
     qualities: [IMAGE_QUALITY],
