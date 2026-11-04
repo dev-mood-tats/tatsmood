@@ -120,12 +120,29 @@ export async function fetchCart(token: string | null): Promise<Cart> {
   return normalizeCart(data, newToken);
 }
 
-/** Las escrituras necesitan un Cart-Token válido: si no hay, se pide uno primero. */
+/** Errores de WooCommerce cuando el Cart-Token ya no vale (caducado: dura ~2 días, la
+ *  cookie más): sin token válido, la Store API pide el nonce de una sesión de navegador. */
+const STALE_TOKEN_CODES = new Set([
+  "woocommerce_rest_missing_nonce",
+  "woocommerce_rest_invalid_nonce",
+  "woocommerce_rest_cart_token_invalid",
+]);
+
+/** Las escrituras necesitan un Cart-Token válido: si no hay, se pide uno primero; si el que
+ *  hay ha caducado, se pide uno nuevo y se repite (el carrito caducado ya no existía). */
 async function cartWrite(path: string, token: string | null, body: unknown) {
-  const validToken = token ?? (await fetchCart(null)).token;
-  if (!validToken) throw new StoreApiError("WooCommerce no ha devuelto un Cart-Token.", 500);
-  const { data, token: newToken } = await storeFetch(path, { method: "POST", token: validToken, body });
-  return normalizeCart(data, newToken);
+  const write = async (t: string | null) => {
+    const validToken = t ?? (await fetchCart(null)).token;
+    if (!validToken) throw new StoreApiError("WooCommerce no ha devuelto un Cart-Token.", 500);
+    const { data, token: newToken } = await storeFetch(path, { method: "POST", token: validToken, body });
+    return normalizeCart(data, newToken);
+  };
+  try {
+    return await write(token);
+  } catch (e) {
+    if (token && e instanceof StoreApiError && e.code && STALE_TOKEN_CODES.has(e.code)) return write(null);
+    throw e;
+  }
 }
 
 // `productId` acepta tanto el id de un producto simple como el de una variación
