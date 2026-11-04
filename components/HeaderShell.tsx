@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Contenedor de la cabecera.
@@ -10,10 +9,10 @@ import { useEffect, useState } from "react";
 //   y sin fusión (con fondo blanco la fusión invertiría la página). El cambio es
 //   instantáneo: con transición, el fondo blanco a medio aparecer + la fusión daban un flash.
 // - Fichas de producto en móvil/tablet: siempre fondo blanco y texto negro (en escritorio,
-//   como el resto de páginas).
+//   como el resto de páginas). Lo hace el CSS (globals.css, «data-solid-header»): leer la
+//   ruta con usePathname() aquí, fuera de <Suspense>, rompía la regeneración de las fichas.
 export function HeaderShell({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
-  const solid = usePathname().startsWith("/product/");
 
   useEffect(() => {
     // Con un margen (entra a partir de 20px y sale por debajo de 5px) para que el rebote del
@@ -30,9 +29,8 @@ export function HeaderShell({ children }: { children: React.ReactNode }) {
   return (
     <header
       data-scrolled={scrolled}
-      data-solid={solid}
       className={`group/header fixed inset-x-0 top-0 z-20 h-[55px] lg:h-16 lg:bg-transparent lg:text-white lg:mix-blend-exclusion ${
-        scrolled || solid ? "bg-background text-foreground" : "bg-transparent text-white mix-blend-exclusion"
+        scrolled ? "bg-background text-foreground" : "bg-transparent text-white mix-blend-exclusion"
       }`}
     >
       {children}

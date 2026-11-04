@@ -143,10 +143,14 @@ async function ProductContent({ params }: { params: Promise<{ slug: string }> })
 
 export default function ProductPage({ params }: PageProps<"/product/[slug]">) {
   return (
-    <Suspense
-      fallback={<ProductPageSkeleton />}
-    >
-      <ProductContent params={params} />
-    </Suspense>
+    <>
+      {/* Marca la página como ficha: en móvil la cabecera va siempre en blanco (globals.css). */}
+      <div data-solid-header hidden />
+      <Suspense
+        fallback={<ProductPageSkeleton />}
+      >
+        <ProductContent params={params} />
+      </Suspense>
+    </>
   );
 }

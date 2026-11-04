@@ -37,7 +37,7 @@ export function Header() {
               móvil (cabecera siempre blanca) también. Es un SVG: <img> normal (next/image
               no lo optimizaría). */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/tatsmood-logo.svg" alt="tatsmood" width={80} height={29} className="h-auto w-[60px] group-data-[scrolled=true]/header:invert lg:w-20 lg:group-data-[scrolled=true]/header:invert-0 max-lg:group-data-[solid=true]/header:invert" />
+          <img src="/tatsmood-logo.svg" alt="tatsmood" width={80} height={29} className="h-auto w-[60px] group-data-[scrolled=true]/header:invert lg:w-20 lg:group-data-[scrolled=true]/header:invert-0" />
         </Link>
         <Suspense
           fallback={

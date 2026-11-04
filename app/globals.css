@@ -98,3 +98,16 @@ input:disabled,
 select:disabled {
   cursor: not-allowed;
 }
+
+/* Fichas de producto en móvil/tablet: cabecera siempre blanca con texto negro (la ficha
+   lleva <div data-solid-header>). Fuera de @layer para que gane a las clases de Tailwind. */
+@media (width < 64rem) {
+  body:has([data-solid-header]) header.group\/header {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    mix-blend-mode: normal;
+  }
+  body:has([data-solid-header]) header.group\/header img[alt="tatsmood"] {
+    filter: invert(1);
+  }
+}

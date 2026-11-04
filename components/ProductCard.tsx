@@ -117,7 +117,10 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
         )}
       </Link>
 
-      <div className="relative mt-3">
+      {/* En escritorio, 13px más de zona de hover por debajo (y el mismo margen negativo, para
+          no mover la rejilla): los botones de talla (27px desde 3px) sobresalen de la línea de
+          título (17px) y, sin esto, al bajar el ratón sobre ellos se salía del hover. */}
+      <div className="relative mt-3 lg:-mb-[13px] lg:pb-[13px]">
         <div className={`flex flex-col lg:flex-row lg:items-baseline lg:justify-between lg:gap-2 ${canQuickAdd ? "lg:group-hover:invisible" : ""}`}>
           <h3>{product.name}</h3>
           <Price product={product} />
