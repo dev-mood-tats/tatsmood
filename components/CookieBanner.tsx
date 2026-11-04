@@ -10,7 +10,9 @@ type Choice = Record<OptionalCategory, boolean>;
 const none: Choice = { performance: false, targeting: false };
 const all: Choice = { performance: true, targeting: true };
 
+// Subrayado solo en los enlaces dentro de un texto; los botones sueltos, sin subrayar.
 const link = "underline underline-offset-2 transition-opacity duration-300 hover:opacity-60";
+const textButton = "transition-opacity duration-300 hover:opacity-60";
 const button = "h-[45px] flex-1 bg-surface px-[10px] leading-[20px] transition-colors duration-300 hover:bg-foreground hover:text-background";
 
 /**
@@ -138,10 +140,10 @@ export function CookieBanner() {
           <p id="cookie-prefs-title">Manage consent preferences</p>
           {hasOptional && (
             <div className="flex gap-[30px]">
-              <button type="button" className={link} onClick={() => save(none)}>
+              <button type="button" className={textButton} onClick={() => save(none)}>
                 Reject all
               </button>
-              <button type="button" className={link} onClick={() => save(all)}>
+              <button type="button" className={textButton} onClick={() => save(all)}>
                 Accept all
               </button>
             </div>
@@ -170,10 +172,10 @@ export function CookieBanner() {
         </div>
 
         <div className="flex justify-between">
-          <button type="button" className={link} onClick={() => closePrefs()}>
+          <button type="button" className={textButton} onClick={() => closePrefs()}>
             Close
           </button>
-          <button type="button" className={link} onClick={() => save(choice)}>
+          <button type="button" className={textButton} onClick={() => save(choice)}>
             Save preferences
           </button>
         </div>

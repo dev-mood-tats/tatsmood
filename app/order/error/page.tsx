@@ -44,7 +44,7 @@ async function OrderError({ searchParams }: { searchParams: PageProps<"/order/er
             Back to checkout
           </a>
         )}
-        <Link href="/store" className="underline transition-opacity duration-300 hover:opacity-60">
+        <Link href="/store" className="transition-opacity duration-300 hover:opacity-60">
           Back to the store
         </Link>
       </div>

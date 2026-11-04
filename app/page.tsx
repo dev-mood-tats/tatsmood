@@ -99,7 +99,7 @@ export default function HomePage() {
           <FeaturedProducts />
         </Suspense>
         <div className="reveal pb-[149px] pt-[144px] text-center">
-          <Link href="/store" className="underline transition-opacity hover:opacity-60 duration-300">
+          <Link href="/store" className="transition-opacity hover:opacity-60 duration-300">
             Shop all
           </Link>
         </div>

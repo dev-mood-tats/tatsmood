@@ -11,7 +11,7 @@ export default function ErrorPage({ error, retry }: { error: unknown; retry: () 
       {process.env.NODE_ENV === "development" && (
         <pre className="mt-6 overflow-x-auto whitespace-pre-wrap bg-surface p-4 text-left">{message}</pre>
       )}
-      <button type="button" onClick={() => retry()} className="mt-8 underline">
+      <button type="button" onClick={() => retry()} className="mt-8 transition-opacity duration-300 hover:opacity-60">
         Try again
       </button>
     </div>
