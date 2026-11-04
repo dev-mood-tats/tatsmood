@@ -43,7 +43,7 @@ async function CollectionSection({ collection, first }: { collection: Collection
       </Link>
       <div className="mt-4 px-5 lg:px-[15px]">
         <div className="reveal grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-          <p>{title}</p>
+          <h2>{title}</h2>
           <p className="text-foreground">{withDate(collection)}</p>
         </div>
         <div className="mt-10 sm:mt-16">
@@ -86,13 +86,15 @@ async function HomeCollections() {
 export default function HomePage() {
   return (
     <div className="-mt-[55px] lg:-mt-16">
+      {/* La home no tiene título visible: h1 solo para buscadores y lectores de pantalla. */}
+      <h1 className="sr-only">tatsmood – graphic design brand from Valencia</h1>
       <Suspense fallback={<div className="h-[165vw] sm:h-[85vh]" />}>
         <HomeCollections />
       </Suspense>
 
       {/* Medidas de la web real: título, 15px, rejilla de 5 y "Shop all" centrado */}
       <section className="px-5 lg:px-[15px]">
-        <p className="reveal mb-[15px]">Featured</p>
+        <h2 className="reveal mb-[15px]">Featured</h2>
         <Suspense fallback={<ProductGridSkeleton count={5} variant="featured" />}>
           <FeaturedProducts />
         </Suspense>

@@ -22,7 +22,7 @@ async function Thanks({ searchParams }: { searchParams: PageProps<"/order/thank-
   if (!order) {
     return (
       <>
-        <p>Thank you for your order!</p>
+        <h1>Thank you for your order!</h1>
         <p className="mt-4">We have received your order. You will get an email with all the details in a few minutes.</p>
         <Link href="/store" className={`mt-10 ${button}`}>
           Continue shopping
@@ -37,7 +37,7 @@ async function Thanks({ searchParams }: { searchParams: PageProps<"/order/thank-
 
   return (
     <>
-      <p>Order #{order.number}</p>
+      <h1>Order #{order.number}</h1>
       <p className="mt-3">Thank you{order.billing.first_name ? `, ${order.billing.first_name}` : ""}!</p>
       <p className="mt-4 max-w-xl">
         {pendingPayment

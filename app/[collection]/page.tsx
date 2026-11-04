@@ -115,15 +115,15 @@ async function CollectionContent({
 
       {/* "Home / Colección" a la izquierda y la descripción a la derecha (en móvil, debajo) */}
       <div className="reveal mt-[15px] px-5 lg:flex lg:items-start lg:px-[15px]">
-        <p className="lg:w-[48.46%] lg:shrink-0">
+        <div className="lg:w-[48.46%] lg:shrink-0">
           <Link
             href="/"
             className="transition-opacity hover:opacity-60 duration-300"
           >
             Home
           </Link>{" "}
-          / {title}
-        </p>
+          / <h1 className="inline">{title}</h1>
+        </div>
         <p className="mt-[14px] lg:mt-0 lg:flex-1">{withDate(page)}</p>
       </div>
 

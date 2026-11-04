@@ -11,7 +11,7 @@ export default async function FaqsPage() {
   if (!page) notFound();
   return (
     <main className="mx-auto max-w-3xl px-6 py-16">
-      <p className="reveal">{page.title}</p>
+      <h1 className="reveal">{page.title}</h1>
       <div className="reveal-children mt-10 space-y-10">
         {(page.faqs ?? []).map((group, g) => (
           <section key={`${group.title}-${g}`}>

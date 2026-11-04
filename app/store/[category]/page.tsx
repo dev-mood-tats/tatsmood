@@ -22,8 +22,15 @@ export async function generateStaticParams() {
 async function CategoryStore({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
   const [products, categories] = await Promise.all([getProducts({ perPage: 100 }), getCategories()]);
-  if (!categories.some((c) => c.slug === category)) notFound();
-  return <StoreBrowser products={products} categories={sortTypes(categories)} initialCategory={category} />;
+  const cat = categories.find((c) => c.slug === category);
+  if (!cat) notFound();
+  return (
+    <>
+      {/* Sin título visible (el filtro ya marca la categoría): h1 para buscadores y lectores. */}
+      <h1 className="sr-only">{typeLabel(cat)}</h1>
+      <StoreBrowser products={products} categories={sortTypes(categories)} initialCategory={category} />
+    </>
+  );
 }
 
 export default function CategoryPage({ params }: PageProps<"/store/[category]">) {

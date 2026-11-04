@@ -24,7 +24,7 @@ async function OrderError({ searchParams }: { searchParams: PageProps<"/order/er
   return (
     <>
       {order && <p>Order #{order.number}</p>}
-      <p className="mt-3">{cancelled ? "You have cancelled your order" : "The payment could not be completed"}</p>
+      <h1 className="mt-3">{cancelled ? "You have cancelled your order" : "The payment could not be completed"}</h1>
       <p className="mx-auto mt-4 max-w-md">
         {cancelled
           ? "Nothing has been charged. Your cart is still there in case you want to finish your purchase later."

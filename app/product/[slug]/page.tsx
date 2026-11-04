@@ -74,7 +74,7 @@ async function RelatedProducts({ productId, categoryId, ids }: { productId: numb
   if (products.length === 0) return null;
   return (
     <section className="mt-24 px-5 lg:px-[15px] lg:mt-[180px]">
-      <p className="reveal mb-6">You may also like</p>
+      <h2 className="reveal mb-6">You may also like</h2>
       <ProductGrid products={products} variant="related" />
     </section>
   );
@@ -107,7 +107,7 @@ async function ProductContent({ params }: { params: Promise<{ slug: string }> })
             {/* Móvil: nombre a la izquierda y precio a la derecha en la misma fila (web real).
                 Escritorio: uno debajo de otro. */}
             <div className="flex items-baseline justify-between gap-4 lg:block">
-              <p>{product.name}</p>
+              <h1>{product.name}</h1>
               <Price product={product} className="block shrink-0" />
             </div>
 

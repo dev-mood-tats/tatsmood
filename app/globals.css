@@ -12,6 +12,11 @@
   --line: #e9e5e5;
   --accent: #000000;
   --surface: #f4f4f4;
+  /* Valor de reserva de la variable que pone next/font (con una clase en <html>). Si esa
+     clase y el CSS no coinciden (p. ej. un HTML de un despliegue con el CSS de otro), la
+     variable quedaba vacía, toda la declaración font-family se anulaba y salía Times.
+     Así siempre hay Inter Tight: los @font-face llevan este nombre de familia. */
+  --font-inter-tight: "Inter Tight", "Inter Tight Fallback";
   --font-sans: var(--font-inter-tight), "Inter Tight", sans-serif;
 }
 

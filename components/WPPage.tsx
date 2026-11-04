@@ -17,7 +17,7 @@ export async function WPPage({ slug }: { slug: string }) {
   if (!page) notFound();
   return (
     <main className="mx-auto max-w-3xl px-5 py-16 sm:px-6 lg:px-[15px]">
-      <p className="reveal">{page.title}</p>
+      <h1 className="reveal">{page.title}</h1>
       <div className="wp-page reveal-children mt-8" dangerouslySetInnerHTML={{ __html: page.html }} />
     </main>
   );
