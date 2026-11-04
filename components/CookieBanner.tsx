@@ -24,10 +24,15 @@ const button = "h-[45px] flex-1 bg-surface px-[10px] leading-[20px] transition-c
  * Las cookies opcionales empiezan apagadas (el RGPD no admite casillas marcadas de antemano)
  * y sus scripts solo se cargan con permiso (components/ConsentScripts.tsx).
  * Sale hasta que el visitante elige; cualquier enlace a «#cookie-settings» abre el panel.
+ * Va por encima de todo (z-[70]: más que el carrito, z-40/50). El panel de preferencias
+ * entra como el carrito: el velo blanco aparece fundido y el panel sube desde abajo, con la
+ * misma duración y curva; se cierra igual (clic fuera, «Close» o Escape).
  */
 export function CookieBanner() {
   const [view, setView] = useState<"closed" | "banner" | "prefs">("closed");
   const [choice, setChoice] = useState<Choice>(none);
+  // Panel de preferencias a la vista (para la animación de entrada y salida).
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
     // La cookie solo se puede leer en el navegador: se decide aquí, después de hidratar.
@@ -52,11 +57,34 @@ export function CookieBanner() {
     };
   }, []);
 
+  useEffect(() => {
+    if (view !== "prefs") return;
+    // Dos frames: el panel se pinta primero fuera de la pantalla y luego entra animado.
+    let id = requestAnimationFrame(() => {
+      id = requestAnimationFrame(() => setShown(true));
+    });
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePrefs();
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      cancelAnimationFrame(id);
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [view]);
+
   if (view === "closed") return null;
 
+  // Cierra el panel animado (500ms, como el carrito) y luego pasa a la vista siguiente.
+  function closePrefs(next?: "closed" | "banner") {
+    setShown(false);
+    window.setTimeout(() => setView(next ?? (getConsent() ? "closed" : "banner")), 500);
+  }
+
   const save = (value: Choice) => {
-    setView("closed");
     saveConsent(value);
+    if (view === "prefs") closePrefs("closed");
+    else setView("closed");
   };
   const hasOptional = OPTIONAL_CATEGORIES.length > 0;
 
@@ -65,7 +93,7 @@ export function CookieBanner() {
       <div
         role="dialog"
         aria-label="Cookies"
-        className="fixed inset-x-0 bottom-0 z-50 grid gap-[25px] bg-background px-5 pb-[calc(26px+env(safe-area-inset-bottom))] pt-[36px] lg:inset-x-auto lg:bottom-[15px] lg:right-[15px] lg:w-[500px] lg:pb-[26px]"
+        className="fixed inset-x-0 bottom-0 z-[70] grid gap-[25px] bg-background px-5 pb-[calc(26px+env(safe-area-inset-bottom))] pt-[36px] lg:inset-x-auto lg:bottom-[15px] lg:right-[15px] lg:w-[500px] lg:pb-[26px]"
       >
         <p className="leading-[18px]">
           {hasOptional
@@ -92,13 +120,19 @@ export function CookieBanner() {
     );
   }
 
+  const ease = "duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]";
   return (
-    <div className="fixed inset-0 z-50 flex items-end bg-white/[0.56]" onClick={(e) => e.target === e.currentTarget && setView(getConsent() ? "closed" : "banner")}>
+    <>
+      <div
+        aria-hidden
+        className={`fixed inset-0 z-[70] bg-white/[0.56] transition-opacity ${ease} ${shown ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        onClick={() => closePrefs()}
+      />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="cookie-prefs-title"
-        className="flex max-h-[85svh] w-full flex-col gap-[25px] bg-background px-5 pb-[calc(25px+env(safe-area-inset-bottom))] pt-[25px] lg:max-h-[70vh] lg:px-[50px] lg:py-[30px]"
+        className={`fixed inset-x-0 bottom-0 z-[70] flex max-h-[85svh] w-full flex-col gap-[25px] bg-background px-5 pb-[calc(25px+env(safe-area-inset-bottom))] pt-[25px] transition-[translate] will-change-[translate] ${ease} lg:max-h-[70vh] lg:px-[50px] lg:py-[30px] ${shown ? "translate-y-0" : "translate-y-full"}`}
       >
         <div className="flex flex-wrap items-baseline justify-between gap-x-[30px] gap-y-[10px]">
           <p id="cookie-prefs-title">Manage consent preferences</p>
@@ -118,7 +152,7 @@ export function CookieBanner() {
           We use cookies to make the website work{hasOptional ? ", to analyze its performance and to measure our campaigns" : ""}. Some
           cookies are essential for the shop to work correctly and cannot be disabled. Here you can see what each one does
           {hasOptional ? " and choose which ones you allow" : ""}. More information in our{" "}
-          <Link href="/cookie-policy" className={link} onClick={() => setView(getConsent() ? "closed" : "banner")}>
+          <Link href="/cookie-policy" className={link} onClick={() => closePrefs()}>
             Cookie policy
           </Link>
           .
@@ -136,7 +170,7 @@ export function CookieBanner() {
         </div>
 
         <div className="flex justify-between">
-          <button type="button" className={link} onClick={() => setView(getConsent() ? "closed" : "banner")}>
+          <button type="button" className={link} onClick={() => closePrefs()}>
             Close
           </button>
           <button type="button" className={link} onClick={() => save(choice)}>
@@ -144,7 +178,7 @@ export function CookieBanner() {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

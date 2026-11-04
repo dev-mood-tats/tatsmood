@@ -15,6 +15,8 @@ export function NavMenu({ menus }: { menus: Menus }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const searchInput = useRef<HTMLInputElement>(null);
+  const menuPanel = useRef<HTMLDivElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
   // Al abrir el buscador, el cursor ya está en el campo.
   useEffect(() => {
     if (open === "search") searchInput.current?.focus({ preventScroll: true });
@@ -34,6 +36,21 @@ export function NavMenu({ menus }: { menus: Menus }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Menú abierto: un clic en cualquier parte de la web que no sea el propio panel (ni el
+  // botón «Menu», que ya lo abre y lo cierra) lo cierra. Con un listener en el documento y no
+  // con una capa por encima, para que funcione también en la cabecera y el clic siga
+  // haciendo lo suyo (un enlace navega, «Search» abre el buscador…).
+  useEffect(() => {
+    if (open !== "menu") return;
+    const onPointerDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (menuPanel.current?.contains(t) || menuButton.current?.contains(t)) return;
+      setOpen(null);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
   function closeAll() {
     setOpen(null);
   }
@@ -50,7 +67,7 @@ export function NavMenu({ menus }: { menus: Menus }) {
       <button type="button" onClick={() => setOpen(open === "search" ? null : "search")} className="hidden hover:opacity-60 lg:inline">
         Search
       </button>
-      <button type="button" onClick={() => setOpen(open === "menu" ? null : "menu")} className="hidden hover:opacity-60 lg:inline">
+      <button ref={menuButton} type="button" onClick={() => setOpen(open === "menu" ? null : "menu")} className="hidden hover:opacity-60 lg:inline">
         Menu
       </button>
 
@@ -90,10 +107,8 @@ export function NavMenu({ menus }: { menus: Menus }) {
       {/* El panel está siempre montado para poder animarlo al abrir y al cerrar con un
           fundido (solo opacidad, sin movimiento); el contenido aparece un instante después. */}
       {mounted && createPortal(
-        <>
-        {/* Capa invisible: un clic en cualquier sitio fuera del panel lo cierra. */}
-        {open === "menu" && <div aria-hidden className="fixed inset-0 z-[9] hidden lg:block" onClick={closeAll} />}
         <div
+          ref={menuPanel}
           inert={open !== "menu"}
           className={`fixed inset-x-0 top-0 z-10 hidden border-b border-line bg-background px-5 pb-[52px] pt-[105px] transition-opacity duration-300 ease-out lg:px-[15px] lg:block lg:pl-[15.5%] ${
             open === "menu" ? "opacity-100" : "pointer-events-none opacity-0"
@@ -114,8 +129,7 @@ export function NavMenu({ menus }: { menus: Menus }) {
               </ul>
             ))}
           </div>
-        </div>
-        </>,
+        </div>,
         document.body,
       )}
     </>
