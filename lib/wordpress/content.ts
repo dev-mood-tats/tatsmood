@@ -1,6 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { getWooConfig } from "@/lib/config";
 import { objectPosition } from "@/lib/focal";
+import { wpFetch } from "@/lib/wp-fetch";
 
 // Contenidos que Tat edita en WordPress (mu-plugins/tatsmood-content.php), leídos de la
 // API pública /wp-json/tatsmood/v1/. Con la misma caché que el catálogo: WordPress avisa
@@ -37,7 +38,7 @@ function contentCache() {
 }
 
 async function wpGet<T>(path: string): Promise<T | null> {
-  const res = await fetch(`${getWooConfig().url}/wp-json/tatsmood/v1${path}`, { cache: "no-store" });
+  const res = await wpFetch(`${getWooConfig().url}/wp-json/tatsmood/v1${path}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`WordPress ${path}: ${res.status}`);
   return (await res.json()) as T;

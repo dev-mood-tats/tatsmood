@@ -1,5 +1,6 @@
 import { getWooConfig } from "@/lib/config";
 import { buildQueryString, signOAuthParams } from "./oauth";
+import { wpFetch } from "@/lib/wp-fetch";
 
 export class WooCommerceError extends Error {
   constructor(
@@ -52,7 +53,7 @@ export async function wooFetch<T>(path: string, { method = "GET", query, body }:
   if (body !== undefined) headers["Content-Type"] = "application/json";
 
   const qs = buildQueryString(finalParams);
-  const res = await fetch(qs ? `${endpoint}?${qs}` : endpoint, {
+  const res = await wpFetch(qs ? `${endpoint}?${qs}` : endpoint, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
