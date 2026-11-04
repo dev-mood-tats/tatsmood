@@ -34,6 +34,14 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // En el build, pocos procesos a la vez: el MySQL compartido de Hostinger
+    // limita las conexiones y con 22 workers WordPress responde «Error establishing
+    // a database connection». Si una página falla, se reintenta.
+    cpus: 2,
+    staticGenerationMaxConcurrency: 4,
+    staticGenerationRetryCount: 3,
+  },
   images: {
     // Solo se permite una calidad: cualquier <Image> se sirve al 85 %.
     qualities: [IMAGE_QUALITY],
