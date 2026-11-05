@@ -10,6 +10,8 @@ export interface WCImage {
   height?: number;
   /** Centro de interés en % ([x, y]) marcado en Medios; se usa al recortar la foto. */
   focal?: [number, number];
+  /** Tamaños que ya ha generado WordPress, listos para el atributo srcset. */
+  srcset?: string;
 }
 
 export interface WCCategory {

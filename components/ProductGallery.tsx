@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { WPImage } from "@/components/WPImage";
 import type { WCImage } from "@/lib/woocommerce/types";
 import { objectPosition } from "@/lib/focal";
 import { HScroll } from "./HScroll";
@@ -21,10 +21,10 @@ export function ProductMainImages({ images, name }: { images: WCImage[]; name: s
     <HScroll indicator="mx-5 lg:hidden" className="mx-5 flex gap-[15px] overflow-x-auto [scrollbar-width:none] lg:mx-0 lg:block lg:space-y-[15px] lg:overflow-visible">
       {images.map((img, i) => (
         <div key={`${img.id}-${i}`} className="relative aspect-[4/5] w-full shrink-0 overflow-hidden">
-          <Image
+          <WPImage
             src={img.src}
+            srcSet={img.srcset}
             alt={img.alt || name}
-            fill
             priority={i === 0}
             sizes="(min-width: 1024px) 67vw, 100vw"
             className={`object-cover ${i === 0 ? "reveal-now" : ""}`}
@@ -57,13 +57,13 @@ export function ProductShootImages({ slots, name }: { slots: (WCImage | null)[];
           <div className={`lg:flex lg:w-1/3 lg:justify-end lg:pr-[15px] ${small ? "" : "hidden lg:flex"}`}>
             {small && (
               <div className="relative aspect-[4/5] w-full overflow-hidden lg:w-[18.9vw]">
-                <Image src={small.src} alt={small.alt || name} fill sizes="(min-width: 1024px) 19vw, 100vw" className="object-cover" style={{ objectPosition: objectPosition(small) }} />
+                <WPImage src={small.src} srcSet={small.srcset} alt={small.alt || name} sizes="(min-width: 1024px) 19vw, 100vw" className="object-cover" style={{ objectPosition: objectPosition(small) }} />
               </div>
             )}
           </div>
           {big && (
             <div className="relative aspect-[4/5] w-full overflow-hidden lg:w-[33.5vw]">
-              <Image src={big.src} alt={big.alt || name} fill sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover" style={{ objectPosition: objectPosition(big) }} />
+              <WPImage src={big.src} srcSet={big.srcset} alt={big.alt || name} sizes="(min-width: 1024px) 34vw, 100vw" className="object-cover" style={{ objectPosition: objectPosition(big) }} />
             </div>
           )}
         </div>

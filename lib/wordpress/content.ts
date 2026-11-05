@@ -8,7 +8,7 @@ import { wpFetch } from "@/lib/wp-fetch";
 // a /api/revalidate al guardar y la web se actualiza al momento.
 
 /** `focal`: centro de interés en % ([x, y]) que Tat marca en Medios; se usa al recortar. */
-export type WPImage = { url: string; width: number; height: number; alt: string; focal: [number, number] };
+export type WPImage = { url: string; width: number; height: number; alt: string; focal: [number, number]; srcset?: string };
 /** `link`: ruta de la web (/product/…) o dirección externa a la que lleva la foto; vacío si no enlaza. */
 export type LookbookImage = WPImage & { crop: "" | "4:3" | "1:1" | "4:5"; link: string };
 export type LookbookRow = { layout: string; tight: boolean; images: LookbookImage[] };

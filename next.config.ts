@@ -1,11 +1,13 @@
 import type { NextConfig } from "next";
 
-// Imágenes "a lo Next.js": WordPress guarda solo el original y Next.js genera bajo demanda
-// cada tamaño que pide la web, en WebP y siempre al 85 % de calidad, y lo guarda en caché
-// (.next/cache/images). Para vaciar la caché basta con borrar esa carpeta.
-const IMAGE_QUALITY = 85;
+// Imágenes: las sirve WordPress tal cual. WordPress las guarda en WebP al 90 % y en varios
+// tamaños al subirlas (mu-plugin tatsmood-images.php) y la web solo elige el tamaño con
+// srcset (components/WPImage.tsx). Next.js no redimensiona nada.
 
-// Dominio desde el que se sirven las imágenes de WordPress (wp-content/uploads).
+// Dominio de WordPress (para las redirecciones de /wp-content y /wp-admin).
+// Se guarda en el entorno para que todos los procesos del build usen el mismo valor.
+process.env.NEXT_DEPLOYMENT_ID ||= `build-${Date.now()}`;
+
 const wpUrl = new URL(process.env.WOOCOMMERCE_URL || "http://tatsmood.local");
 
 const nextConfig: NextConfig = {
@@ -32,6 +34,11 @@ const nextConfig: NextConfig = {
       { source: "/wp-login.php", destination: `${wpUrl.origin}/wp-login.php`, permanent: false },
     ];
   },
+  // Identificador de cada despliegue (se fija al hacer el build). Si alguien tiene la web
+  // abierta mientras se publica una versión nueva, al navegar Next.js detecta que su página
+  // es de la versión anterior y la recarga entera, en vez de pedir archivos que ya no
+  // existen y acabar en «Something went wrong».
+  deploymentId: process.env.NEXT_DEPLOYMENT_ID,
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {
@@ -41,35 +48,10 @@ const nextConfig: NextConfig = {
     cpus: 2,
     staticGenerationMaxConcurrency: 4,
     staticGenerationRetryCount: 3,
-    // Imágenes: como mucho 2 a la vez. El hosting tiene ~3 GB de memoria para todo (la web,
-    // la tienda en PHP y los builds) y cada foto original se descomprime entera en memoria
-    // para redimensionarla; sin límite, la primera visita tras un despliegue (caché de
-    // imágenes vacía) generaba muchas a la vez y la memoria rozaba el tope.
-    imgOptConcurrency: 2,
   },
   images: {
-    // Solo se permite una calidad: cualquier <Image> se sirve al 85 %.
-    qualities: [IMAGE_QUALITY],
-    formats: ["image/webp"],
-    // Anchos que puede generar Next. Hasta 3200 px: las fotos de cabecera en móvil se
-    // recortan mucho (una foto apaisada en una caja vertical se ve 3-4 veces más ancha que
-    // la pantalla) y en pantallas de alta densidad necesitan ese ancho para verse nítidas.
-    // Next nunca agranda una foto por encima de su tamaño original.
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560, 3200],
-    // Una vez generada, cada versión se reutiliza durante 30 días.
-    minimumCacheTTL: 60 * 60 * 24 * 30,
-    remotePatterns: [
-      {
-        protocol: wpUrl.protocol.replace(":", "") as "http" | "https",
-        hostname: wpUrl.hostname,
-        port: wpUrl.port,
-        pathname: "/wp-content/uploads/**",
-      },
-    ],
-    // tatsmood.local (LocalWP) apunta a una IP local, que Next.js bloquea por seguridad.
-    // Solo se permite mientras WordPress sea el local (.local), también al probar el build
-    // con "npm start"; con el WordPress real (dominio público) queda desactivado solo.
-    dangerouslyAllowLocalIP: wpUrl.hostname.endsWith(".local"),
+    // Sin optimizador de imágenes (ver arriba).
+    unoptimized: true,
   },
 };
 

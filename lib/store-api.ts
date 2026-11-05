@@ -70,7 +70,8 @@ function normalizeCart(raw: any, token: string | null): Cart {
         maxQuantity: Number.isFinite(max) && max > 0 && max < 9999 ? max : null,
         unitPrice: money(item.prices?.price, itemMinor),
         lineSubtotal: money(item.totals?.line_subtotal, itemMinor) + money(item.totals?.line_subtotal_tax, itemMinor),
-        image: item.images?.[0]?.src ? String(item.images[0].src) : null,
+        // Miniatura que ya genera WooCommerce (no la original): en el carrito la foto es pequeña.
+        image: item.images?.[0] ? String(item.images[0].thumbnail || item.images[0].src) : null,
         variation: (item.variation ?? []).map((v: any) => ({
           attribute: decodeEntities(String(v.attribute ?? "")),
           value: decodeEntities(String(v.value ?? "")),

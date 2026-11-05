@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { addToCart } from "@/lib/cart-store";
@@ -87,10 +87,10 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
       <Link href={`/product/${product.slug}`} className="relative block aspect-[4/5] overflow-hidden" aria-label={product.name}>
         {image ? (
           <>
-            <Image
+            <WPImage
               src={image.src}
+              srcSet={image.srcset}
               alt={image.alt || product.name}
-              fill
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover"
               style={{ objectPosition: objectPosition(image) }}
@@ -98,10 +98,10 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
             {/* Foto de hover encima de la principal, con un fundido suave solo en ella: la
                 principal se queda opaca debajo, así no se transparentan las dos a la vez. */}
             {hoverImage && (
-              <Image
+              <WPImage
                 src={hoverImage.src}
+                srcSet={hoverImage.srcset}
                 alt={hoverImage.alt || product.name}
-                fill
                 sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
                 className="card-hover-img absolute inset-0 object-cover opacity-0 lg:group-hover:opacity-100"
                 style={{ objectPosition: objectPosition(hoverImage) }}

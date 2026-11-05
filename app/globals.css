@@ -105,14 +105,16 @@ select:disabled {
 }
 
 /* Fichas de producto en móvil/tablet: cabecera siempre blanca con texto negro (la ficha
-   lleva <div data-solid-header>). Fuera de @layer para que gane a las clases de Tailwind. */
+   lleva <div data-solid-header>). Fuera de @layer para que gane a las clases de Tailwind.
+   Solo si la marca está visible: al volver atrás, Next.js guarda la página anterior en el
+   DOM oculta (con display: none) y, sin esto, la home seguía con la cabecera blanca. */
 @media (width < 64rem) {
-  body:has([data-solid-header]) header.group\/header {
+  body:has([data-solid-header]:not([style*="none"])) header.group\/header {
     background-color: var(--color-background);
     color: var(--color-foreground);
     mix-blend-mode: normal;
   }
-  body:has([data-solid-header]) header.group\/header img[alt="tatsmood"] {
+  body:has([data-solid-header]:not([style*="none"])) header.group\/header img[alt="tatsmood"] {
     filter: invert(1);
   }
 }

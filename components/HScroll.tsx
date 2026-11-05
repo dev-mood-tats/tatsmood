@@ -28,7 +28,10 @@ export function HScroll({
     const update = () => {
       const size = el.scrollWidth > 0 ? Math.min(100, (el.clientWidth / el.scrollWidth) * 100) : 100;
       const max = el.scrollWidth - el.clientWidth;
-      setBar({ size, offset: max > 0 ? (el.scrollLeft / max) * (100 - size) : 0 });
+      // Limitada a los extremos: en iOS, el rebote al estirar más allá del principio o del
+      // final da posiciones fuera de rango y la barra se salía de la pantalla.
+      const pos = max > 0 ? Math.min(Math.max(el.scrollLeft / max, 0), 1) : 0;
+      setBar({ size, offset: pos * (100 - size) });
     };
     update();
     el.addEventListener("scroll", update, { passive: true });
@@ -71,7 +74,9 @@ export function HScroll({
   }, []);
 
   const scroller = (
-    <div ref={ref} className={className}>
+    // overscroll-x-none: sin el efecto de «estirar» al llegar al principio o al final (dejaba
+    // un hueco en blanco junto a la primera o la última foto).
+    <div ref={ref} className={`overscroll-x-none ${className ?? ""}`}>
       {children}
     </div>
   );

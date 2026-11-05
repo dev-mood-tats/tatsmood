@@ -60,6 +60,8 @@ export function NavMenu({ menus }: { menus: Menus }) {
     if (!query.trim()) return;
     closeAll();
     router.push(`/store?search=${encodeURIComponent(query.trim())}`);
+    // La próxima vez que se abra el buscador, vacío.
+    setQuery("");
   }
 
   return (
@@ -158,6 +160,14 @@ export function MobileMenu({ menus }: { menus: Menus }) {
     };
   }, [open]);
 
+  // Al cerrarse el menú, «Collections» vuelve a plegarse para la próxima vez. Cuando ya
+  // ha terminado el fundido de salida (0,3 s), para que no se vea cómo se pliega.
+  useEffect(() => {
+    if (open || !collectionsOpen) return;
+    const t = window.setTimeout(() => setCollectionsOpen(false), 300);
+    return () => window.clearTimeout(t);
+  }, [open, collectionsOpen]);
+
   function close() {
     setOpen(false);
   }
@@ -195,6 +205,8 @@ export function MobileMenu({ menus }: { menus: Menus }) {
     const href = `/store?search=${encodeURIComponent(query.trim())}`;
     closeAfterNavigation(href);
     router.push(href);
+    // La próxima vez que se abra el menú, el buscador vacío.
+    setQuery("");
   }
 
   return (
@@ -203,13 +215,13 @@ export function MobileMenu({ menus }: { menus: Menus }) {
         <IconMenu className="h-[7px] w-[14px]" />
       </button>
 
-      {/* Siempre montado: aparece al instante y al cerrarse sale con un fundido */}
+      {/* Siempre montado: entra y sale con el mismo fundido (0,3 s) */}
       {mounted &&
         createPortal(
           <div
             inert={!open}
-            className={`fixed inset-0 z-30 overflow-y-auto bg-background transition-opacity ease-out lg:hidden ${
-              open ? "opacity-100 duration-0" : "pointer-events-none opacity-0 duration-300"
+            className={`fixed inset-0 z-30 overflow-y-auto bg-background transition-opacity duration-300 ease-out lg:hidden ${
+              open ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           >
             <button type="button" onClick={close} className="absolute right-5 top-4 z-10 flex h-6 items-center lg:right-[15px]" aria-label="Close menu">

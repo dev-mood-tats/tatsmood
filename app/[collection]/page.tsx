@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -63,10 +63,10 @@ function LookbookRow({ row, title }: { row: Row; title: string }) {
         return (
           <div key={`${img.url}-${i}`} className="relative w-full overflow-hidden" style={{ aspectRatio: ratio }}>
             <LookbookLink href={img.link}>
-              <Image
+              <WPImage
                 src={img.url}
+                srcSet={img.srcset}
                 alt={img.alt || title}
-                fill
                 sizes={`(min-width: 1024px) ${Math.ceil((LOOKBOOK_WIDTH_VW * (width / 100) * cols[i]) / total)}vw, 100vw`}
                 className="object-cover"
                 style={{ objectPosition: focalPosition(img) }}
@@ -100,10 +100,10 @@ async function CollectionContent({
       {/* Foto grande: medidas de la web real (650px en móvil, 87% de la pantalla en escritorio) */}
       <div className="relative h-[650px] w-full overflow-hidden lg:h-[87vh]">
         {page.hero && (
-          <Image
+          <WPImage
             src={page.hero.url}
+            srcSet={page.hero.srcset}
             alt={page.hero.alt || title}
-            fill
             priority
             // Caja: 650px de alto en móvil, 87vh en escritorio
             sizes={coverSizes(page.hero, { px: 650 }, { vh: 87, from: 1024 })}

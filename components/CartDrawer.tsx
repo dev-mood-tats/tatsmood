@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
@@ -119,7 +119,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
               aria-modal="true"
               aria-label="Cart"
               inert={!open}
-              className={`fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-line bg-background transition-[translate] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[translate] sm:max-w-sm lg:w-[25vw] lg:max-w-none ${open ? "translate-x-0" : "translate-x-full"}`}
+              className={`fixed inset-y-0 right-0 z-50 flex w-[90%] flex-col border-l border-line bg-background transition-[translate] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[translate] sm:max-w-sm lg:w-[25vw] lg:max-w-none ${open ? "translate-x-0" : "translate-x-full"}`}
             >
               {/* Cerrar (X) en la esquina superior derecha */}
               <button
@@ -154,11 +154,9 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                               className="relative aspect-[4/5] w-24 shrink-0 self-start overflow-hidden lg:w-[150px]"
                             >
                               {item.image && (
-                                <Image
+                                <WPImage
                                   src={item.image}
                                   alt={item.name}
-                                  fill
-                                  sizes="(min-width: 1024px) 150px, 96px"
                                   className="object-cover"
                                 />
                               )}
@@ -207,20 +205,14 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                         );
                       })}
                     </ul>
-
-                    {/* Subtotal justo debajo de los productos, a la derecha, como en la web real */}
-                    <div className="hidden py-[15px] text-right lg:block">
-                      <span>Subtotal: </span>
-                      {formatMoney(cart.subtotal, cart.currency)}
-                    </div>
                   </div>
 
                   {/* Botón de pagar abajo del todo, dentro del margen de 15px del panel.
                       Enlace normal (no <Link>): /checkout redirige al checkout de WooCommerce. */}
                   <div className="p-5 lg:p-[15px]">
-                    {/* En móvil el subtotal va justo encima del botón: texto a la izquierda y
+                    {/* Subtotal justo encima del botón (móvil y escritorio): texto a la izquierda y
                         precio a la derecha, en la misma fila */}
-                    <div className="mb-[15px] flex items-baseline justify-between lg:hidden">
+                    <div className="mb-[15px] flex items-baseline justify-between">
                       <span>Subtotal</span>
                       <span>{formatMoney(cart.subtotal, cart.currency)}</span>
                     </div>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { Suspense } from "react";
 import { HomeClosing } from "@/components/HomeClosing";
@@ -10,7 +10,7 @@ import { pageMetadata, plainText } from "@/lib/seo";
 export async function generateMetadata() {
   const [home, collections] = await Promise.all([getHomeSettings(), getCollections()]);
   const first = collections.find((c) => c.slug === home.collections[0]);
-  return { ...pageMetadata({ description: plainText(home.intro), path: "/", image: first?.homeImage ?? home.background }), title: { absolute: "tatsmood" } };
+  return { ...pageMetadata({ description: plainText(home.intro), path: "/", image: home.background ?? first?.homeImage }), title: { absolute: "tatsmood" } };
 }
 
 // Home: todo sale de WordPress («Web tatsmood»): qué colecciones salen y en qué orden, los
@@ -29,10 +29,10 @@ async function CollectionSection({ collection, first }: { collection: Collection
         className="relative block h-[165vw] w-full overflow-hidden sm:h-[85vh]"
       >
         {image && (
-          <Image
+          <WPImage
             src={image.url}
+            srcSet={image.srcset}
             alt={image.alt || title}
-            fill
             // Caja: 165vw de alto en móvil, 85vh desde 640px
             sizes={coverSizes(image, { vw: 165 }, { vh: 85, from: 640 })}
             className="no-reveal object-cover"
@@ -99,7 +99,7 @@ export default function HomePage() {
           <FeaturedProducts />
         </Suspense>
         <div className="reveal pb-[149px] pt-[144px] text-center">
-          <Link href="/store" className="transition-opacity hover:opacity-60 duration-300">
+          <Link href="/store" className="underline underline-offset-2 transition-opacity hover:opacity-60 duration-300">
             Shop all
           </Link>
         </div>

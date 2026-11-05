@@ -1,5 +1,6 @@
 import { getWooConfig } from "@/lib/config";
 import type { WCImage } from "./types";
+import { wpFetch } from "@/lib/wp-fetch";
 
 // Campos ACF del grupo "Single product" (group_691a068053282) en Productos:
 // imagen_hover, shoot_1..shoot_4, desplegable_1/2 (+ _title). WooCommerce los expone
@@ -48,8 +49,8 @@ export async function fetchMediaMap(ids: number[]): Promise<Record<number, WCIma
   const unique = Array.from(new Set(ids.filter((id) => Number.isInteger(id) && id > 0)));
   if (unique.length === 0) return {};
   const { url } = getWooConfig();
-  const res = await fetch(
-    `${url}/wp-json/wp/v2/media?include=${unique.join(",")}&per_page=100&_fields=id,source_url,alt_text,title,media_details,tatsmood_focal`,
+  const res = await wpFetch(
+    `${url}/wp-json/wp/v2/media?include=${unique.join(",")}&per_page=100&_fields=id,source_url,alt_text,title,media_details,tatsmood_focal,tatsmood_srcset`,
     { cache: "no-store" },
   );
   if (!res.ok) return {};
@@ -60,6 +61,7 @@ export async function fetchMediaMap(ids: number[]): Promise<Record<number, WCIma
     title?: { rendered?: string };
     media_details?: { width?: number; height?: number };
     tatsmood_focal?: [number, number];
+    tatsmood_srcset?: string;
   }[];
   const map: Record<number, WCImage> = {};
   for (const m of media) {
@@ -71,6 +73,7 @@ export async function fetchMediaMap(ids: number[]): Promise<Record<number, WCIma
       width: m.media_details?.width,
       height: m.media_details?.height,
       focal: m.tatsmood_focal,
+      srcset: m.tatsmood_srcset || undefined,
     };
   }
   return map;
@@ -119,7 +122,7 @@ export async function withImageSizes(images: WCImage[]): Promise<WCImage[]> {
   const media = await fetchMediaMap(images.map((img) => img.id)).catch(() => ({}) as Record<number, WCImage>);
   return images.map((img) => {
     const m = media[img.id];
-    return m?.width && m?.height ? { ...img, width: m.width, height: m.height, focal: m.focal ?? img.focal } : img;
+    return m?.width && m?.height ? { ...img, width: m.width, height: m.height, focal: m.focal ?? img.focal, srcset: m.srcset ?? img.srcset } : img;
   });
 }
 
