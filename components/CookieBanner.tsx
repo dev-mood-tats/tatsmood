@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { OPEN_CONSENT_EVENT, getConsent, saveConsent } from "@/lib/consent";
 import { COOKIE_CATEGORIES, OPTIONAL_CATEGORIES, type CookieCategory, type OptionalCategory } from "@/lib/cookies";
 import { IconChevronDown } from "./Icons";
+import { lockPageScroll } from "@/lib/scroll-lock";
 
 type Choice = Record<OptionalCategory, boolean>;
 const none: Choice = { performance: false, targeting: false };
@@ -67,11 +68,11 @@ export function CookieBanner() {
     });
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && closePrefs();
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    const unlock = lockPageScroll();
     return () => {
       cancelAnimationFrame(id);
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      unlock();
     };
   }, [view]);
 
@@ -127,7 +128,7 @@ export function CookieBanner() {
     <>
       <div
         aria-hidden
-        className={`fixed inset-0 z-[70] bg-white/[0.56] transition-opacity ${ease} ${shown ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-[70] touch-none bg-white/[0.56] transition-opacity ${ease} ${shown ? "opacity-100" : "pointer-events-none opacity-0"}`}
         onClick={() => closePrefs()}
       />
       <div
@@ -160,7 +161,7 @@ export function CookieBanner() {
           .
         </p>
 
-        <div className="-mr-[10px] grid gap-[12px] overflow-y-auto pr-[10px]">
+        <div className="-mr-[10px] grid gap-[12px] overflow-y-auto overscroll-contain pr-[10px]">
           {COOKIE_CATEGORIES.map((cat) => (
             <Category
               key={cat.id}

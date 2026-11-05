@@ -18,6 +18,7 @@ import {
 import { formatMoney } from "@/lib/format";
 import type { Cart, CartItem } from "@/lib/store-api";
 import { IconClose, IconMinus, IconPlus } from "./Icons";
+import { lockPageScroll } from "@/lib/scroll-lock";
 
 /** Abre el carrito lateral desde cualquier parte (p. ej. al añadir un producto). */
 export function openCart() {
@@ -80,10 +81,10 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setCartOpen(false);
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
+    const unlock = lockPageScroll();
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      unlock();
     };
   }, [open]);
 
@@ -108,7 +109,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
             <div
               onClick={close}
               aria-hidden="true"
-              className={`fixed inset-0 z-40 bg-white/[0.56] transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              className={`fixed inset-0 z-40 touch-none bg-white/[0.56] transition-opacity duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
             />
 
             {/* Panel: entra y sale con una curva que frena suave al final (la de los paneles de iOS),
@@ -141,7 +142,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                 </div>
               ) : (
                 <>
-                  <div className="flex-1 overflow-y-auto px-5 pt-[70px] lg:px-[15px]">
+                  <div className="flex-1 overflow-y-auto overscroll-contain px-5 pt-[70px] lg:px-[15px]">
                     <ul>
                       {cart.items.map((item) => {
                         const atMax = item.maxQuantity !== null && item.quantity >= item.maxQuantity;

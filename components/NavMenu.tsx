@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import type { Menus } from "@/lib/wordpress/content";
 import { MenuLink } from "./MenuLink";
 import { IconClose, IconMenu, IconMinus, IconPlus } from "./Icons";
+import { lockPageScroll } from "@/lib/scroll-lock";
 
 // "Search" y "Menu" del header: igual que la web real, una abre un buscador a
 // pantalla completa y la otra despliega un panel con las mismas listas del footer
@@ -154,10 +155,7 @@ export function MobileMenu({ menus }: { menus: Menus }) {
 
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return lockPageScroll();
   }, [open]);
 
   // Al cerrarse el menú, «Collections» vuelve a plegarse para la próxima vez. Cuando ya
@@ -220,7 +218,7 @@ export function MobileMenu({ menus }: { menus: Menus }) {
         createPortal(
           <div
             inert={!open}
-            className={`fixed inset-0 z-30 overflow-y-auto bg-background transition-opacity duration-300 ease-out lg:hidden ${
+            className={`fixed inset-0 z-30 overflow-y-auto overscroll-contain bg-background transition-opacity duration-300 ease-out lg:hidden ${
               open ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
           >
