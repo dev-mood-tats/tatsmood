@@ -45,24 +45,39 @@ function metaMap(raw: RawProduct): Record<string, string> {
   return map;
 }
 
+type RawMedia = {
+  id: number;
+  source_url: string;
+  alt_text: string;
+  title?: { rendered?: string };
+  media_details?: { width?: number; height?: number };
+  tatsmood_focal?: [number, number];
+  tatsmood_srcset?: string;
+};
+
+/** Una petición a /wp/v2/media (como mucho 100 fotos, el máximo que da WordPress de una vez). */
+async function fetchMediaChunk(url: string, ids: number[]): Promise<RawMedia[]> {
+  const res = await wpFetch(
+    `${url}/wp-json/wp/v2/media?include=${ids.join(",")}&per_page=100&_fields=id,source_url,alt_text,title,media_details,tatsmood_focal,tatsmood_srcset`,
+    { cache: "no-store" },
+  );
+  // Si WordPress falla (p. ej. el MySQL compartido rechaza la conexión), error y no un
+  // resultado vacío: un vacío se guardaba en la caché y las tarjetas se quedaban sin la foto
+  // de hover (y la ficha sin galería) durante horas. Con el error, la página se reintenta
+  // (en el build) o se sigue sirviendo la versión anterior, que sí estaba completa.
+  if (!res.ok) throw new Error(`WordPress /wp/v2/media: ${res.status}`);
+  return (await res.json()) as RawMedia[];
+}
+
 export async function fetchMediaMap(ids: number[]): Promise<Record<number, WCImage>> {
   const unique = Array.from(new Set(ids.filter((id) => Number.isInteger(id) && id > 0)));
   if (unique.length === 0) return {};
   const { url } = getWooConfig();
-  const res = await wpFetch(
-    `${url}/wp-json/wp/v2/media?include=${unique.join(",")}&per_page=100&_fields=id,source_url,alt_text,title,media_details,tatsmood_focal,tatsmood_srcset`,
-    { cache: "no-store" },
-  );
-  if (!res.ok) return {};
-  const media = (await res.json()) as {
-    id: number;
-    source_url: string;
-    alt_text: string;
-    title?: { rendered?: string };
-    media_details?: { width?: number; height?: number };
-    tatsmood_focal?: [number, number];
-    tatsmood_srcset?: string;
-  }[];
+  // De 100 en 100: la tienda entera pide más (45 productos × foto de hover + 4 shoots) y,
+  // en una sola petición, WordPress solo devolvía las 100 primeras.
+  const chunks: number[][] = [];
+  for (let i = 0; i < unique.length; i += 100) chunks.push(unique.slice(i, i + 100));
+  const media = (await Promise.all(chunks.map((c) => fetchMediaChunk(url, c)))).flat();
   const map: Record<number, WCImage> = {};
   for (const m of media) {
     map[m.id] = {
