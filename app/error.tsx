@@ -11,6 +11,10 @@ const autoRetries = new Map<string, number>();
 // vuelve a fallar, recarga la página entera (una vez) y solo después sale el aviso.
 export default function ErrorPage({ error, retry }: { error: unknown; retry: () => void }) {
   const message = error instanceof Error ? error.message : String(error);
+  // Errores del servidor: «digest» (el mismo código sale en los registros). Del navegador:
+  // el principio del mensaje.
+  const digest = (error as { digest?: string } | null)?.digest;
+  const ref = digest ?? `client: ${message.slice(0, 80)}`;
   // Primero en blanco (igual en el servidor y en el navegador, sin errores de hidratación);
   // el efecto decide si reintenta o enseña el aviso.
   const [showMessage, setShowMessage] = useState(false);
@@ -69,6 +73,8 @@ export default function ErrorPage({ error, retry }: { error: unknown; retry: () 
       <button type="button" onClick={() => retry()} className="mt-8 transition-opacity duration-300 hover:opacity-60">
         Try again
       </button>
+      {/* Referencia del error: con ella se encuentra en los registros de la web. */}
+      <p className="mt-10 text-muted">Ref. {ref}</p>
     </div>
   );
 }
