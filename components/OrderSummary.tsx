@@ -24,10 +24,10 @@ export function OrderSummary({ order }: { order: WCOrder }) {
             </div>
             <div className="flex flex-1 justify-between gap-3">
               <span>
-                <span>{item.name}</span>
+                <span translate="no">{item.name}</span>
                 <span> × {item.quantity}</span>
               </span>
-              <span>{formatMoney(withTax(item.total, item.total_tax), currency)}</span>
+              <span translate="no">{formatMoney(withTax(item.total, item.total_tax), currency)}</span>
             </div>
           </li>
         ))}
@@ -37,21 +37,21 @@ export function OrderSummary({ order }: { order: WCOrder }) {
         {discount > 0 && (
           <div className="flex justify-between">
             <dt>Discount</dt>
-            <dd>−{formatMoney(discount, currency)}</dd>
+            <dd translate="no">−{formatMoney(discount, currency)}</dd>
           </div>
         )}
         <div className="flex justify-between">
           <dt>
             Shipping{order.shipping_lines[0]?.method_title ? ` · ${order.shipping_lines[0].method_title}` : ""}
           </dt>
-          <dd>{shipping > 0 ? formatMoney(shipping, currency) : "Free"}</dd>
+          <dd translate={shipping > 0 ? "no" : undefined}>{shipping > 0 ? formatMoney(shipping, currency) : "Free"}</dd>
         </div>
         <div className="flex justify-between border-t border-line pt-3">
           <dt>Total</dt>
-          <dd>{money(order.total, currency)}</dd>
+          <dd translate="no">{money(order.total, currency)}</dd>
         </div>
         {parsePrice(order.total_tax) ? (
-          <p className="text-right">Includes {money(order.total_tax, currency)} VAT</p>
+          <p className="text-right">Includes <span translate="no">{money(order.total_tax, currency)}</span> VAT</p>
         ) : null}
       </dl>
     </div>

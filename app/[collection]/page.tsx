@@ -122,7 +122,7 @@ async function CollectionContent({
           >
             Home
           </Link>{" "}
-          / <h1 className="inline">{title}</h1>
+          / <h1 className="inline" translate="no">{title}</h1>
         </div>
         <p className="mt-[14px] lg:mt-0 lg:flex-1">{withDate(page)}</p>
       </div>

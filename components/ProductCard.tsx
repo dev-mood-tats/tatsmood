@@ -122,7 +122,7 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
           título (17px) y, sin esto, al bajar el ratón sobre ellos se salía del hover. */}
       <div className="relative mt-3 lg:-mb-[13px] lg:pb-[13px]">
         <div className={`flex flex-col lg:flex-row lg:items-baseline lg:justify-between lg:gap-2 ${canQuickAdd ? "lg:group-hover:invisible" : ""}`}>
-          <h3>{product.name}</h3>
+          <h3 translate="no">{product.name}</h3>
           <Price product={product} />
         </div>
 
@@ -150,6 +150,7 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
                 <button
                   key={option}
                   type="button"
+                  translate="no"
                   disabled={unavailable}
                   onClick={(e) => handleSizeClick(e, option)}
                   className="min-w-[35px] bg-surface px-[10px] py-[5px] text-foreground transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:text-[#b5b5b5] disabled:line-through disabled:hover:bg-surface duration-300"

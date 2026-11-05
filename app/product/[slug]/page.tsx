@@ -107,7 +107,7 @@ async function ProductContent({ params }: { params: Promise<{ slug: string }> })
             {/* Móvil: nombre a la izquierda y precio a la derecha en la misma fila (web real).
                 Escritorio: uno debajo de otro. */}
             <div className="flex items-baseline justify-between gap-4 lg:block">
-              <h1>{product.name}</h1>
+              <h1 translate="no">{product.name}</h1>
               <Price product={product} className="block shrink-0" />
             </div>
 

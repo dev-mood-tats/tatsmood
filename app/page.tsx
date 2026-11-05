@@ -43,7 +43,7 @@ async function CollectionSection({ collection, first }: { collection: Collection
       </Link>
       <div className="mt-4 px-5 lg:px-[15px]">
         <div className="reveal grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-          <h2>{title}</h2>
+          <h2 translate="no">{title}</h2>
           <p className="text-foreground">{withDate(collection)}</p>
         </div>
         <div className="mt-10 sm:mt-16">

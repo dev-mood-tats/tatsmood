@@ -71,6 +71,7 @@ export function AddToCartForm({
               <button
                 key={option}
                 type="button"
+                translate="no"
                 onClick={() => setSelected((prev) => ({ ...prev, [attr.name]: option }))}
                 className={`h-7 px-3 transition-colors ${
                   selected[attr.name] === option

@@ -47,7 +47,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         <Header />
-        <main className="flex-1 pt-[55px] lg:pt-16">{children}</main>
+        {/* Sin relleno arriba: la cabecera es «sticky» y ya ocupa su sitio en la página. */}
+        <main className="flex-1">{children}</main>
         {/* El pie lee los menús de WordPress: dentro de <Suspense> para que, si su caché acaba
             de caducar (p. ej. tras guardar en WordPress), no bloquee el prerenderizado. */}
         <Suspense fallback={<footer className="site-footer mt-[100px] h-16 lg:mt-[150px]" />}>

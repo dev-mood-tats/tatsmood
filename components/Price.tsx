@@ -9,12 +9,12 @@ export function Price({ product, className = "" }: { product: WCProduct; classNa
 
   if (product.on_sale && regular !== null && regular > price) {
     return (
-      <span className={className}>
+      <span className={className} translate="no">
         <span className="text-accent">{formatMoney(price)}</span>{" "}
         <s className="text-foreground text-[0.9em]">{formatMoney(regular)}</s>
       </span>
     );
   }
 
-  return <span className={className}>{formatMoney(price)}</span>;
+  return <span className={className} translate="no">{formatMoney(price)}</span>;
 }

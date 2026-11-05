@@ -170,14 +170,14 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                                     onClick={close}
                                     className="transition-opacity hover:opacity-60 duration-300"
                                   >
-                                    {item.name}
+                                    <span translate="no">{item.name}</span>
                                   </Link>
                                   {item.variation.map((v) => (
-                                    <p key={v.attribute}>{v.value}</p>
+                                    <p key={v.attribute} translate="no">{v.value}</p>
                                   ))}
                                 </div>
                                 {/* Precio en la esquina superior derecha */}
-                                <p className="shrink-0 text-right">{formatMoney(item.lineSubtotal, cart.currency)}</p>
+                                <p className="shrink-0 text-right" translate="no">{formatMoney(item.lineSubtotal, cart.currency)}</p>
                               </div>
                               {/* Selector de unidades a la izquierda (con − en 1 se quita del carrito) */}
                               <div className="mt-2 flex items-center justify-start">
@@ -215,7 +215,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                         precio a la derecha, en la misma fila */}
                     <div className="mb-[15px] flex items-baseline justify-between">
                       <span>Subtotal</span>
-                      <span>{formatMoney(cart.subtotal, cart.currency)}</span>
+                      <span translate="no">{formatMoney(cart.subtotal, cart.currency)}</span>
                     </div>
                     {/* Navegación completa (no <Link>): /checkout es una ruta que redirige al
                         checkout de WooCommerce en WordPress. */}
