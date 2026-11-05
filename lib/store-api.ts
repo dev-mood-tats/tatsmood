@@ -87,18 +87,27 @@ async function storeFetch(
   { method = "GET", token, body }: { method?: string; token?: string | null; body?: unknown } = {},
 ): Promise<{ data: any; token: string | null }> {
   const { url } = getWooConfig();
-  const res = await fetch(`${url}/wp-json/wc/store/v1${path}`, {
-    method,
-    headers: {
-      Accept: "application/json",
-      ...(token ? { "Cart-Token": token } : {}),
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-    cache: "no-store",
-  });
+  const request = () =>
+    fetch(`${url}/wp-json/wc/store/v1${path}`, {
+      method,
+      headers: {
+        Accept: "application/json",
+        ...(token ? { "Cart-Token": token } : {}),
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      cache: "no-store",
+    });
 
-  const text = await res.text();
+  // Si WordPress no ha podido conectar con MySQL (fallo momentáneo del hosting), la petición
+  // no ha llegado a hacer nada: se puede repetir sin riesgo, también al añadir al carrito.
+  let res = await request();
+  let text = await res.text();
+  for (let attempt = 1; attempt <= 2 && res.status >= 500 && /database/i.test(text); attempt++) {
+    await new Promise((r) => setTimeout(r, 300 * attempt));
+    res = await request();
+    text = await res.text();
+  }
   let data: any = null;
   try {
     data = text ? JSON.parse(text) : null;
