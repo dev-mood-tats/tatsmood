@@ -6,7 +6,7 @@
  *   generándose a la vez (build o regeneración) se juntaban decenas de peticiones y el MySQL
  *   compartido rechazaba conexiones («Error establishing a database connection»).
  * - Reintentos: las lecturas (GET) que fallan con 5xx o error de red se repiten hasta
- *   RETRIES veces, esperando un poco más cada vez.
+ *   RETRIES veces, esperando un poco más cada vez (0,4 s, 0,8 s, 1,6 s más un poco al azar).
  */
 const MAX_IN_FLIGHT = 4;
 const RETRIES = 3;
