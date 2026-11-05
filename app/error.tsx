@@ -8,7 +8,7 @@ const autoRetries = new Map<string, number>();
 // Si algo falla al cargar una página (normalmente, WordPress no responde un momento: el
 // MySQL compartido de Hostinger a veces rechaza conexiones). Antes de enseñar el aviso se
 // reintenta sola una vez, al segundo y medio: casi siempre a la segunda ya carga. Si
-// vuelve a fallar, sale el aviso con «Try again».
+// vuelve a fallar, recarga la página entera (una vez) y solo después sale el aviso.
 export default function ErrorPage({ error, retry }: { error: unknown; retry: () => void }) {
   const message = error instanceof Error ? error.message : String(error);
   // Primero en blanco (igual en el servidor y en el navegador, sin errores de hidratación);
@@ -16,18 +16,37 @@ export default function ErrorPage({ error, retry }: { error: unknown; retry: () 
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
+    // Recarga completa de la página (una sola vez por página y minuto). Arregla los fallos de
+    // la navegación interna, p. ej. durante un despliegue o con la web abierta de una versión
+    // anterior. Si ya se ha recargado hace poco, se enseña el aviso.
+    const reloadOrShow = () => {
+      const key = `tm-reload:${location.pathname}`;
+      let last = 0;
+      try {
+        last = Number(sessionStorage.getItem(key)) || 0;
+      } catch {}
+      if (Date.now() - last > 60_000) {
+        try {
+          sessionStorage.setItem(key, String(Date.now()));
+        } catch {}
+        location.reload();
+        return;
+      }
+      setShowMessage(true);
+    };
+
     const recent = Date.now() - (autoRetries.get(location.pathname) ?? 0) < 30_000;
     let fallback = 0;
     const t = window.setTimeout(
       () => {
         if (recent) {
-          setShowMessage(true);
+          reloadOrShow();
           return;
         }
         autoRetries.set(location.pathname, Date.now());
         retry();
-        // Si a los 4 s esta página de error sigue aquí, el reintento no ha bastado: aviso.
-        fallback = window.setTimeout(() => setShowMessage(true), 4000);
+        // Si a los 4 s esta página de error sigue aquí, el reintento no ha bastado.
+        fallback = window.setTimeout(reloadOrShow, 4000);
       },
       recent ? 0 : 1500,
     );
