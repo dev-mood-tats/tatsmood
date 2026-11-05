@@ -36,16 +36,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`h-full antialiased ${interTight.variable}`}>
       <body className="relative min-h-full flex flex-col font-sans">
-        {/* Texto a 12px: en iPhone/iPad, Safari hace zoom al tocar un campo (el buscador del
-            menú) porque es menor de 16px. Con maximum-scale=1 deja de hacerlo, y en iOS se
-            puede seguir ampliando con los dedos (Safari ignora ese límite para el pellizco).
-            Solo en iOS: en Android sí bloquearía el pellizco (y allí no hace ese zoom). Lo mismo
-            que en el checkout de WordPress (tema tatsmood-headless, header.php). */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `if(/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)){var m=document.querySelector('meta[name="viewport"]');if(m)m.content="width=device-width, initial-scale=1, maximum-scale=1";}`,
-          }}
-        />
         <Header />
         {/* Sin relleno arriba: la cabecera es «sticky» y ya ocupa su sitio en la página. */}
         <main className="flex-1">{children}</main>

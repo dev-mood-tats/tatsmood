@@ -94,14 +94,20 @@ export function NavMenu({ menus }: { menus: Menus }) {
               open === "search" ? "opacity-100 delay-100" : "opacity-0"
             }`}
           >
-            <input
-              ref={searchInput}
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search"
-              className="h-6 w-full border-b-[0.5px] border-muted bg-transparent text-foreground outline-none placeholder:text-foreground"
-            />
+            {/* Campo a 16px escalado al 75 % (= 12px, como el resto): con menos de 16px, Safari
+                en iPhone/iPad hace zoom al tocarlo. Ancho y medidas compensados (× 4/3). */}
+            <div className="relative h-6">
+              <div className="absolute left-0 top-0 w-[133.3333%] origin-top-left scale-75">
+                <input
+                  ref={searchInput}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search"
+                  className="h-8 w-full border-b-[0.667px] border-muted bg-transparent text-[16px] text-foreground outline-none placeholder:text-foreground"
+                />
+              </div>
+            </div>
           </form>
         </div>,
         document.body,
@@ -227,13 +233,19 @@ export function MobileMenu({ menus }: { menus: Menus }) {
             </button>
             <div className="flex min-h-full flex-col justify-center px-5 py-20 lg:px-[15px]">
               <form onSubmit={handleSearchSubmit}>
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search"
-                  className="w-full border-b-[0.5px] border-muted bg-transparent pb-1 text-foreground outline-none placeholder:text-foreground"
-                />
+                {/* Campo a 16px escalado al 75 % (= 12px, como el resto): con menos de 16px,
+                    Safari en iPhone hace zoom al tocarlo. Medidas compensadas (× 4/3). */}
+                <div className="relative h-[22px]">
+                  <div className="absolute left-0 top-0 w-[133.3333%] origin-top-left scale-75">
+                    <input
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search"
+                      className="w-full border-b-[0.667px] border-muted bg-transparent pb-[5px] text-[16px] leading-[22.67px] text-foreground outline-none placeholder:text-foreground"
+                    />
+                  </div>
+                </div>
               </form>
 
               {/* Tipos: se pliegan cuando se abre "Collections" (y vuelven al cerrarlo) */}
