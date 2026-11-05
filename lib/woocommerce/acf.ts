@@ -1,6 +1,7 @@
 import { getWooConfig } from "@/lib/config";
 import type { WCImage } from "./types";
 import { wpFetch } from "@/lib/wp-fetch";
+import { sizeGuideHtml } from "@/lib/size-guide";
 
 // Campos ACF del grupo "Single product" (group_691a068053282) en Productos:
 // imagen_hover, shoot_1..shoot_4, desplegable_1/2 (+ _title). WooCommerce los expone
@@ -126,7 +127,7 @@ export async function resolveAcfForProducts(raws: RawProduct[]): Promise<Record<
       careTitle: meta.desplegable_1_title || EMPTY_ACF.careTitle,
       careHtml: meta.desplegable_1 || "",
       sizeGuideTitle: meta.desplegable_2_title || EMPTY_ACF.sizeGuideTitle,
-      sizeGuideHtml: meta.desplegable_2 || "",
+      sizeGuideHtml: sizeGuideHtml(meta.desplegable_2, meta.tatsmood_size_table),
     };
   }
   return out;
