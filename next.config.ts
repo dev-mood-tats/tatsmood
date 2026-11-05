@@ -41,6 +41,11 @@ const nextConfig: NextConfig = {
     cpus: 2,
     staticGenerationMaxConcurrency: 4,
     staticGenerationRetryCount: 3,
+    // Imágenes: como mucho 2 a la vez. El hosting tiene ~3 GB de memoria para todo (la web,
+    // la tienda en PHP y los builds) y cada foto original se descomprime entera en memoria
+    // para redimensionarla; sin límite, la primera visita tras un despliegue (caché de
+    // imágenes vacía) generaba muchas a la vez y la memoria rozaba el tope.
+    imgOptConcurrency: 2,
   },
   images: {
     // Solo se permite una calidad: cualquier <Image> se sirve al 85 %.

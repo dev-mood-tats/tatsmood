@@ -135,7 +135,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
               ) : cart.items.length === 0 ? (
                 <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
                   <p className="text-foreground">Your cart is empty.</p>
-                  <Link href="/store" onClick={close} className="transition-opacity duration-300 hover:opacity-60">
+                  <Link href="/store" onClick={close} className="underline transition-opacity duration-300 hover:opacity-60">
                     Go to the store
                   </Link>
                 </div>

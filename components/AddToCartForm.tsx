@@ -14,9 +14,11 @@ export function AddToCartForm({
   // Un producto variable puede tener uno o varios atributos que lo definen
   // (talla, idioma, color…), marcados por WooCommerce con `variation: true`.
   const isVariable = product.type === "variable";
+  // Solo en productos variables: un producto simple puede arrastrar un atributo marcado
+  // «para variaciones» (p. ej. si antes fue variable) y sacaba tallas que no existen.
   const variantAttributes = useMemo(
-    () => product.attributes.filter((a) => a.variation),
-    [product.attributes],
+    () => (isVariable ? product.attributes.filter((a) => a.variation) : []),
+    [isVariable, product.attributes],
   );
 
   // Las opciones empiezan sin elegir. Mientras falte alguna, el botón "Add to cart" sale
