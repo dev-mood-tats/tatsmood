@@ -29,7 +29,7 @@ async function Store({ searchParams }: { searchParams: Promise<{ search?: string
 
 export default function ShopPage({ searchParams }: PageProps<"/store">) {
   return (
-    <div className="px-5 lg:px-[15px] pb-24 pt-[105px]">
+    <div className="px-5 lg:px-[15px] pb-24 pt-[75px] lg:pt-[105px]">
       <h1 className="sr-only">Store</h1>
       <Suspense fallback={<StoreSkeleton />}>
         <Store searchParams={searchParams as Promise<{ search?: string }>} />
