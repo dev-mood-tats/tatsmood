@@ -1,6 +1,6 @@
 "use client";
 
-import { WPImage } from "@/components/WPImage";
+import { WPImage, smallestImageSrc } from "@/components/WPImage";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { addToCart } from "@/lib/cart-store";
@@ -52,7 +52,7 @@ export function ProductCard({ product, appearOrder }: { product: WCProduct; appe
   const baseOptimistic = {
     name: product.name,
     slug: product.slug,
-    image: product.images[0]?.src ?? null,
+    image: smallestImageSrc(product.images[0]),
   };
 
   // Al pulsar se añade al momento (optimista) y WooCommerce lo confirma detrás.

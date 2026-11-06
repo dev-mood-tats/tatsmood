@@ -31,7 +31,7 @@ export function WPImage({
 }) {
   return (
     <img
-      src={src}
+      src={largestFromSrcSet(srcSet) ?? src}
       srcSet={srcSet || undefined}
       sizes={srcSet ? sizes : undefined}
       alt={alt}
@@ -42,4 +42,24 @@ export function WPImage({
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%", ...style }}
     />
   );
+}
+
+/**
+ * La versión más grande de la lista (la última del srcset). Se usa como `src` para que,
+ * si un navegador no entiende srcset, tampoco descargue la original de Medios, que puede
+ * pesar mucho: WordPress solo pone en la lista los tamaños de 900 KB o menos.
+ */
+function largestFromSrcSet(srcSet?: string | null): string | null {
+  const last = srcSet?.split(",").pop()?.trim().split(/\s+/)[0];
+  return last || null;
+}
+
+/**
+ * La versión más pequeña de una foto (la primera del srcset, 600 px), para miniaturas
+ * como la del carrito: así no se descarga una foto grande para enseñarla en pequeño.
+ */
+export function smallestImageSrc(img?: { src: string; srcset?: string | null } | null): string | null {
+  if (!img) return null;
+  const first = img.srcset?.split(",")[0]?.trim().split(/\s+/)[0];
+  return first || img.src;
 }

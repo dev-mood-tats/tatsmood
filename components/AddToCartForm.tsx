@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { addToCart } from "@/lib/cart-store";
 import type { WCProduct, WCVariation } from "@/lib/woocommerce/types";
+import { smallestImageSrc } from "@/components/WPImage";
 
 export function AddToCartForm({
   product,
@@ -56,7 +57,7 @@ export function AddToCartForm({
       productId,
       name: product.name,
       slug: product.slug,
-      image: product.images[0]?.src ?? null,
+      image: smallestImageSrc(product.images[0]),
       unitPrice: Number(matchedVariation?.price ?? product.price) || 0,
       variation: variantAttributes.map((attr) => ({ attribute: attr.name, value: selected[attr.name] })),
     });

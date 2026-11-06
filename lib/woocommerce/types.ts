@@ -88,7 +88,7 @@ export interface WCOrderLineItem {
   /** Total de la línea sin impuestos ("45.00"). */
   total: string;
   total_tax: string;
-  image?: { id: number | string; src: string } | null;
+  image?: { id: number | string; src: string; srcset?: string } | null;
 }
 
 export interface WCOrder {

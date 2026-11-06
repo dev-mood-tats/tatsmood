@@ -19,7 +19,7 @@ export function OrderSummary({ order }: { order: WCOrder }) {
           <li key={item.id} className="flex items-center gap-4 py-5">
             <div className="relative h-24 w-20 shrink-0 overflow-hidden">
               {item.image?.src && (
-                <WPImage src={item.image.src} alt={item.name} className="no-reveal object-cover" />
+                <WPImage src={item.image.src} srcSet={item.image.srcset} sizes="80px" alt={item.name} className="no-reveal object-cover" />
               )}
             </div>
             <div className="flex flex-1 justify-between gap-3">
