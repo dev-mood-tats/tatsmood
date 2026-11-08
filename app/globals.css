@@ -118,3 +118,31 @@ select:disabled {
     filter: invert(1);
   }
 }
+
+/* Móvil: sin el recuadro gris/azul que pinta el navegador al tocar (o al deslizar el dedo
+   por encima de) un enlace o botón. La señal de pulsación la da PressFeedback. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Destello al pulsar (components/PressFeedback.tsx): el aspecto del hover un momento y
+   vuelta a la normalidad con un fundido. */
+@keyframes press-flash-solid {
+  0%,
+  30% {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+}
+@keyframes press-flash-fade {
+  0%,
+  30% {
+    opacity: 0.6;
+  }
+}
+[class*="hover:bg-foreground"].is-pressed {
+  animation: press-flash-solid 0.45s ease-out;
+}
+[class*="hover:opacity-60"].is-pressed {
+  animation: press-flash-fade 0.45s ease-out;
+}

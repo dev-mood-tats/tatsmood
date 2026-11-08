@@ -97,6 +97,9 @@ async function storeFetch(
       },
       body: body !== undefined ? JSON.stringify(body) : undefined,
       cache: "no-store",
+      // Si WooCommerce no contesta en 15 s, se da por fallida: así una petición colgada no
+      // deja el carrito bloqueado (los cambios van en cola, uno detrás de otro).
+      signal: AbortSignal.timeout(15_000),
     });
 
   // Si WordPress no ha podido conectar con MySQL (fallo momentáneo del hosting), la petición

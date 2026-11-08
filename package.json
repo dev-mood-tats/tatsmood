@@ -25,5 +25,10 @@
   },
   "allowScripts": {
     "unrs-resolver@1.12.2": true
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.5"
+    }
   }
 }

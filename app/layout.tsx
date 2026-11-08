@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { RevealImages } from "@/components/RevealImages";
 import { CookieBanner } from "@/components/CookieBanner";
+import { PressFeedback } from "@/components/PressFeedback";
 import { ConsentScripts } from "@/components/ConsentScripts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <RevealImages />
         <CookieBanner />
         <ConsentScripts />
+        <PressFeedback />
       </body>
     </html>
   );

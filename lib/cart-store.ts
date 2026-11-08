@@ -27,6 +27,9 @@ export function subscribeCart(listener: () => void) {
 }
 
 export const getCartSnapshot = () => localCart ?? serverCart;
+
+/** Último carrito confirmado por WooCommerce (con las claves reales de cada línea). */
+const getConfirmedCart = () => confirmedCart ?? serverCart;
 export const getOpenSnapshot = () => isOpen;
 
 /** Lo llama el carrito lateral con el carrito que trae el servidor al cargar la página. */
@@ -126,18 +129,34 @@ export function withAddedProduct(cart: Cart, p: OptimisticProduct): Cart {
   return totals(cart, [...cart.items, item]);
 }
 
-/** Las líneas provisionales todavía no existen en WooCommerce: no se pueden editar. */
+/** Línea provisional: se acaba de añadir y WooCommerce aún no le ha dado su clave real. */
 export const isTempItem = (item: CartItem) => item.key.startsWith("temp-");
 
-/** Añade una unidad de un producto; el carrito lateral se abre al cabo de 1 s con él dentro. */
+/**
+ * Clave real de una línea para mandarla a WooCommerce. Si la línea era provisional, se
+ * busca en el carrito confirmado: como los cambios van en cola, cuando le toca el turno a
+ * este cambio el «añadir» de antes ya ha terminado y la línea ya tiene su clave.
+ */
+export function resolveItemKey(item: CartItem): string | null {
+  if (!isTempItem(item)) return item.key;
+  return getConfirmedCart()?.items.find((i) => i.productId === item.productId)?.key ?? null;
+}
+
+/**
+ * Añade una unidad de un producto y abre el carrito lateral, ya con él dentro: al instante
+ * en escritorio y medio segundo después en móvil (para que se vea antes el destello del
+ * botón pulsado).
+ */
 export function addToCart(p: OptimisticProduct) {
-  // El carrito lateral se abre 1 s después de pulsar (ya con el producto dentro).
-  window.setTimeout(() => setCartOpen(true), 1000);
   const formData = new FormData();
   formData.set("productId", String(p.productId));
   formData.set("quantity", "1");
-  return mutateCart(
+  const job = mutateCart(
     (cart) => withAddedProduct(cart, p),
     () => addToCartAction({ status: "idle", message: "" }, formData),
   );
+  const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+  if (isMobile) window.setTimeout(() => setCartOpen(true), 500);
+  else setCartOpen(true);
+  return job;
 }

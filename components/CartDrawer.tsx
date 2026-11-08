@@ -8,8 +8,8 @@ import { setCartItemQuantityAction } from "@/lib/actions/cart";
 import {
   getCartSnapshot,
   getOpenSnapshot,
-  isTempItem,
   mutateCart,
+  resolveItemKey,
   setCartOpen,
   subscribeCart,
   syncServerCart,
@@ -29,10 +29,14 @@ const noopSubscribe = () => () => {};
 
 /** Cambia las unidades de una línea: se ve al instante y se confirma con WooCommerce detrás. */
 function changeQuantity(item: CartItem, quantity: number) {
-  if (isTempItem(item)) return;
   mutateCart(
     (cart) => withQuantity(cart, item.key, quantity),
-    () => setCartItemQuantityAction(item.key, quantity),
+    async () => {
+      // Se resuelve al llegarle el turno en la cola (la línea puede ser recién añadida).
+      const key = resolveItemKey(item);
+      if (!key) return { status: "error" as const, message: "The cart could not be updated." };
+      return setCartItemQuantityAction(key, quantity);
+    },
   );
 }
 
@@ -53,7 +57,9 @@ function QtyButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className="flex h-[27px] w-[27px] items-center justify-center bg-surface transition-colors hover:bg-foreground hover:text-background disabled:opacity-40 duration-300"
+      // touch-manipulation: en móvil cada toque cuenta al momento (sin la espera del doble
+      // toque para hacer zoom). El ::before amplía la zona de toque sin cambiar el diseño.
+      className="relative flex h-[27px] w-[27px] touch-manipulation select-none items-center justify-center bg-surface transition-colors before:absolute before:-inset-[6px] before:content-[''] hover:bg-foreground hover:text-background disabled:opacity-40 duration-300"
     >
       {children}
     </button>
@@ -146,7 +152,6 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                     <ul>
                       {cart.items.map((item) => {
                         const atMax = item.maxQuantity !== null && item.quantity >= item.maxQuantity;
-                        const temp = isTempItem(item);
                         return (
                           <li key={item.key} className="flex gap-4 py-4">
                             <Link
@@ -184,7 +189,6 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                                 <div className="flex items-center gap-2">
                                   <QtyButton
                                     label={item.quantity === 1 ? "Remove from cart" : "Remove one"}
-                                    disabled={temp}
                                     onClick={() => changeQuantity(item, item.quantity - 1)}
                                   >
                                     <IconMinus />
@@ -194,7 +198,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                                   </span>
                                   <QtyButton
                                     label="Add one"
-                                    disabled={temp || atMax}
+                                    disabled={atMax}
                                     onClick={() => changeQuantity(item, item.quantity + 1)}
                                   >
                                     <IconPlus />
