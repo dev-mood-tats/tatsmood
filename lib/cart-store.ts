@@ -143,9 +143,8 @@ export function resolveItemKey(item: CartItem): string | null {
 }
 
 /**
- * Añade una unidad de un producto y abre el carrito lateral, ya con él dentro: al instante
- * en escritorio y medio segundo después en móvil (para que se vea antes el destello del
- * botón pulsado).
+ * Añade una unidad de un producto y abre el carrito lateral medio segundo después, ya con
+ * él dentro (para que antes se vea el destello del botón pulsado).
  */
 export function addToCart(p: OptimisticProduct) {
   const formData = new FormData();
@@ -155,8 +154,6 @@ export function addToCart(p: OptimisticProduct) {
     (cart) => withAddedProduct(cart, p),
     () => addToCartAction({ status: "idle", message: "" }, formData),
   );
-  const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-  if (isMobile) window.setTimeout(() => setCartOpen(true), 500);
-  else setCartOpen(true);
+  window.setTimeout(() => setCartOpen(true), 500);
   return job;
 }
