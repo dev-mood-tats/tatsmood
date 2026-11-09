@@ -8,6 +8,7 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { ProductPageSkeleton } from "@/components/ProductPageSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { getAllProductSlugs, getProductBySlug, getProductVariations, getProducts } from "@/lib/woocommerce/catalog";
+import { sortProductsByType } from "@/lib/navigation";
 import { pageMetadata, plainText, siteUrl } from "@/lib/seo";
 
 /** Descripción para Google: la corta, la larga o, si el producto no tiene ninguna, una a
@@ -61,16 +62,20 @@ export async function generateStaticParams() {
 }
 
 /**
- * «You may also like»: 4 productos. Primero los de la misma categoría (p. ej. las otras
- * tazas en una taza) y, si no llegan a 4, se completan con los relacionados de WooCommerce.
+ * «You may also like»: siempre 4 productos (si hay). Primero los de la misma categoría
+ * (p. ej. las otras tazas en una taza), luego los relacionados de WooCommerce y, si aún no
+ * llegan a 4, se completan con el resto del catálogo (por tipo: ropa primero).
  */
 async function RelatedProducts({ productId, categoryId, ids }: { productId: number; categoryId?: number; ids: number[] }) {
-  const [sameCategory, related] = await Promise.all([
+  const [sameCategory, related, catalog] = await Promise.all([
     categoryId ? getProducts({ categoryId, perPage: 5 }).catch(() => []) : [],
     ids.length ? getProducts({ include: ids.slice(0, 8), perPage: 8 }).catch(() => []) : [],
+    getProducts({ perPage: 100 }).catch(() => []),
   ]);
   const seen = new Set([productId]);
-  const products = [...sameCategory, ...related].filter((p) => !seen.has(p.id) && seen.add(p.id)).slice(0, 4);
+  const products = [...sameCategory, ...related, ...sortProductsByType(catalog)]
+    .filter((p) => !seen.has(p.id) && seen.add(p.id))
+    .slice(0, 4);
   if (products.length === 0) return null;
   return (
     <section className="mt-24 px-5 lg:px-[15px] lg:mt-[180px]">

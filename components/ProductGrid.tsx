@@ -1,6 +1,7 @@
 import type { WCProduct } from "@/lib/woocommerce/types";
 import { HScroll } from "./HScroll";
 import { ProductCard } from "./ProductCard";
+import { sortProductsByType } from "@/lib/navigation";
 
 type Variant = "default" | "wide" | "wideScroll" | "related" | "featured" | "store";
 
@@ -43,7 +44,10 @@ export function ProductGrid({
     );
   }
 
-  const cards = products.map((p, i) => <ProductCard key={p.id} product={p} appearOrder={animate ? i : undefined} />);
+  // Por tipo (ropa, accesorios, mugs y prints: lib/navigation.ts), salvo «Featured» de la
+  // home, que sale en el orden elegido a mano en WordPress («Web tatsmood»).
+  const ordered = variant === "featured" ? products : sortProductsByType(products);
+  const cards = ordered.map((p, i) => <ProductCard key={p.id} product={p} appearOrder={animate ? i : undefined} />);
 
   // Las variantes que en móvil son carrusel horizontal bloquean el eje del gesto.
   if (variant === "related" || variant === "featured" || variant === "wideScroll") {
