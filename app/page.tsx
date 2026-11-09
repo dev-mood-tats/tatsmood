@@ -92,13 +92,14 @@ export default function HomePage() {
         <HomeCollections />
       </Suspense>
 
-      {/* Medidas de la web real: título, 15px, rejilla de 5 y "Shop all" centrado */}
-      <section className="px-5 lg:px-[15px]">
+      {/* Medidas de la web real: título, 15px, rejilla de 5 y "Shop all" centrado. Con más
+          aire arriba (respecto a la última colección) y abajo (antes de la foto final). */}
+      <section className="mt-[150px] px-5 lg:mt-[250px] lg:px-[15px]">
         <h2 className="reveal mb-[15px]">Featured</h2>
         <Suspense fallback={<ProductGridSkeleton count={5} variant="featured" />}>
           <FeaturedProducts />
         </Suspense>
-        <div className="reveal pb-[149px] pt-[144px] text-center">
+        <div className="reveal pb-[200px] pt-[144px] text-center lg:pb-[250px]">
           <Link href="/store" className="underline underline-offset-2 transition-opacity hover:opacity-60 duration-300">
             Shop all
           </Link>
