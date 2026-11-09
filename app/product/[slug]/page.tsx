@@ -7,7 +7,8 @@ import { ProductMainImages, ProductShootImages } from "@/components/ProductGalle
 import { ProductGrid } from "@/components/ProductGrid";
 import { ProductPageSkeleton } from "@/components/ProductPageSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { getAllProductSlugs, getProductBySlug, getProductVariations, getProducts } from "@/lib/woocommerce/catalog";
+import { getAllProductSlugs, getProductBySlug, getProductVariations, getProducts, getProductsInOrder } from "@/lib/woocommerce/catalog";
+import { getCollections } from "@/lib/wordpress/content";
 import { sortProductsByType } from "@/lib/navigation";
 import { pageMetadata, plainText, siteUrl } from "@/lib/seo";
 
@@ -62,18 +63,30 @@ export async function generateStaticParams() {
 }
 
 /**
- * «You may also like»: siempre 4 productos (si hay). Primero los de la misma categoría
- * (p. ej. las otras tazas en una taza), luego los relacionados de WooCommerce y, si aún no
- * llegan a 4, se completan con el resto del catálogo (por tipo: ropa primero).
+ * «You may also like»: siempre 4 productos (si hay). Primero los de la misma colección que
+ * el producto actual (p. ej. el resto de Gracias* Deluxe); si no llegan a 4, se completan
+ * con los de la misma categoría, los relacionados de WooCommerce y el resto del catálogo.
+ * Se muestran ordenados por tipo (ropa primero), como el resto de grids.
  */
 async function RelatedProducts({ productId, categoryId, ids }: { productId: number; categoryId?: number; ids: number[] }) {
-  const [sameCategory, related, catalog] = await Promise.all([
+  const collections = await getCollections().catch(() => []);
+  const collectionIds = [
+    ...new Set(collections.filter((c) => c.products.includes(productId)).flatMap((c) => c.products)),
+  ].filter((id) => id !== productId);
+
+  const [sameCollection, sameCategory, related, catalog] = await Promise.all([
+    collectionIds.length ? getProductsInOrder(collectionIds).catch(() => []) : [],
     categoryId ? getProducts({ categoryId, perPage: 5 }).catch(() => []) : [],
     ids.length ? getProducts({ include: ids.slice(0, 8), perPage: 8 }).catch(() => []) : [],
     getProducts({ perPage: 100 }).catch(() => []),
   ]);
   const seen = new Set([productId]);
-  const products = [...sameCategory, ...related, ...sortProductsByType(catalog)]
+  const products = [
+    ...sortProductsByType(sameCollection),
+    ...sameCategory,
+    ...related,
+    ...sortProductsByType(catalog),
+  ]
     .filter((p) => !seen.has(p.id) && seen.add(p.id))
     .slice(0, 4);
   if (products.length === 0) return null;
