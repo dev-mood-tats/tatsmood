@@ -126,17 +126,20 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
               aria-modal="true"
               aria-label="Cart"
               inert={!open}
-              className={`fixed inset-y-0 right-0 z-50 flex w-[90%] flex-col border-l border-line bg-background transition-[translate] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[translate] sm:max-w-sm lg:w-[25vw] lg:max-w-none ${open ? "translate-x-0" : "translate-x-full"}`}
+              className={`fixed inset-y-0 right-0 z-50 flex w-[90%] flex-col border-l border-line bg-background transition-[translate] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] will-change-[translate] sm:max-w-sm lg:w-[max(380px,25vw)] lg:max-w-none ${open ? "translate-x-0" : "translate-x-full"}`}
             >
-              {/* Cerrar (X) en la esquina superior derecha */}
-              <button
-                type="button"
-                onClick={close}
-                aria-label="Close cart"
-                className="absolute right-5 top-4 z-10 flex h-6 items-center lg:right-[15px]"
-              >
-                <IconClose />
-              </button>
+              {/* Fila superior con la X, con fondo blanco: los productos pasan por debajo al
+                  hacer scroll sin verse detrás de la X (igual que la zona de abajo). */}
+              <div className="absolute inset-x-0 top-0 z-10 h-[55px] bg-background">
+                <button
+                  type="button"
+                  onClick={close}
+                  aria-label="Close cart"
+                  className="absolute right-5 top-4 flex h-6 items-center lg:right-[15px]"
+                >
+                  <IconClose />
+                </button>
+              </div>
               {!cart ? (
                 <p className="p-6 text-foreground">The cart could not be loaded. Please try again in a moment.</p>
               ) : cart.items.length === 0 ? (
@@ -157,7 +160,7 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                             <Link
                               href={`/product/${item.slug}`}
                               onClick={close}
-                              className="relative aspect-[4/5] w-24 shrink-0 self-start overflow-hidden lg:w-[150px]"
+                              className="relative aspect-[4/5] w-24 shrink-0 self-start overflow-hidden lg:w-[120px]"
                             >
                               {item.image && (
                                 <WPImage
