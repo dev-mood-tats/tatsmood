@@ -66,7 +66,7 @@ export async function generateStaticParams() {
  * «You may also like»: siempre 4 productos (si hay). Primero los de la misma colección que
  * el producto actual (p. ej. el resto de Gracias* Deluxe); si no llegan a 4, se completan
  * con los de la misma categoría, los relacionados de WooCommerce y el resto del catálogo.
- * Se muestran ordenados por tipo (ropa primero), como el resto de grids.
+ * Se muestran ordenados por tipo (ropa primero), como el resto de grids (lib/navigation.ts).
  */
 async function RelatedProducts({ productId, categoryId, ids }: { productId: number; categoryId?: number; ids: number[] }) {
   const collections = await getCollections().catch(() => []);
