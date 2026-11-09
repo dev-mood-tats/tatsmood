@@ -35,7 +35,7 @@ async function CategoryStore({ params }: { params: Promise<{ category: string }>
 
 export default function CategoryPage({ params }: PageProps<"/store/[category]">) {
   return (
-    <div className="px-5 lg:px-[15px] pb-24 pt-[75px] lg:pt-[105px]">
+    <div className="px-5 lg:px-[15px] pb-20 pt-[75px] lg:pt-[clamp(40px,7.5svh,105px)]">
       <Suspense fallback={<StoreSkeleton />}>
         <CategoryStore params={params} />
       </Suspense>

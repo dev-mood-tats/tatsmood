@@ -73,7 +73,7 @@ export function StoreBrowser({
     <>
       {/* Filtro: activo en negro y el resto en gris. Escritorio: 50px entre botones (web
           real). Móvil: una sola línea, repartidos a lo ancho (el hueco se adapta). */}
-      <nav className="reveal mb-[55px] flex justify-between lg:justify-center lg:gap-x-[50px]">
+      <nav className="reveal mb-[55px] lg:mb-[clamp(25px,4svh,55px)] flex justify-between lg:justify-center lg:gap-x-[50px]">
         {item("All", null)}
         {categories.map((c) => item(c.name, c.slug))}
       </nav>

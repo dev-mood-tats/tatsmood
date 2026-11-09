@@ -5,7 +5,7 @@ import { ProductGridSkeleton } from "./ProductGrid";
 export function StoreSkeleton() {
   return (
     <>
-      <div className="mb-[55px] h-[33px]" />
+      <div className="mb-[55px] h-[33px] lg:mb-[clamp(25px,4svh,55px)]" />
       <ProductGridSkeleton count={6} variant="store" />
     </>
   );

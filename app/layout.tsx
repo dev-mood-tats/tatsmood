@@ -42,7 +42,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="flex-1">{children}</main>
         {/* El pie lee los menús de WordPress: dentro de <Suspense> para que, si su caché acaba
             de caducar (p. ej. tras guardar en WordPress), no bloquee el prerenderizado. */}
-        <Suspense fallback={<footer className="site-footer mt-[100px] h-16 lg:mt-[150px]" />}>
+        <Suspense fallback={<footer className="site-footer mt-[100px] h-16 lg:mt-[clamp(60px,10svh,150px)]" />}>
           <Footer />
         </Suspense>
         <RevealImages />

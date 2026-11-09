@@ -11,9 +11,12 @@ import { MenuLink } from "./MenuLink";
 export async function Footer() {
   const menus = await getMenusSafe();
   return (
-    // En escritorio mide lo mismo que la cabecera (64px).
+    // En escritorio mide lo mismo que la cabecera (64px). La separación con el contenido
+    // es fluida en escritorio: 10 % del alto de la pantalla, entre 60 y 150 px. Junto con
+    // los márgenes de la tienda (también en svh), hace que en páginas cortas el footer
+    // quepa en pantallas de portátil sin hacer scroll; en pantallas altas, 150 px.
     <footer
-      className="site-footer mt-[100px] px-5 pb-[15px] pt-[15px] lg:mt-[150px] lg:flex lg:h-16 lg:items-center lg:px-[15px] lg:py-0"
+      className="site-footer mt-[100px] px-5 pb-[15px] pt-[15px] lg:mt-[clamp(60px,10svh,150px)] lg:flex lg:h-16 lg:items-center lg:px-[15px] lg:py-0"
     >
       {/* Móvil: todo en columna y alineado a la izquierda (legales, redes, copyright).
           Escritorio: una sola fila con los tres bloques. */}

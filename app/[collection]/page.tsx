@@ -96,7 +96,7 @@ async function CollectionContent({
 
   return (
     // La cabecera va encima de la foto grande (como en la home y la ficha de producto).
-    <div className="-mt-[55px] pb-24 lg:-mt-16">
+    <div className="-mt-[55px] pb-20 lg:-mt-16">
       {/* Foto grande: medidas de la web real (650px en móvil, 87% de la pantalla en escritorio) */}
       <div className="relative h-[650px] w-full overflow-hidden lg:h-[87vh]">
         {page.hero && (

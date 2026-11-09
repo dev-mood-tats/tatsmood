@@ -96,7 +96,7 @@ async function ProductContent({ params }: { params: Promise<{ slug: string }> })
   const mainImages = product.images.length > 1 ? product.images.slice(1) : product.images;
 
   return (
-    <div className="pb-24 lg:-mt-16">
+    <div className="pb-20 lg:-mt-16">
       <ScrollToTop id={product.slug} />
       <ProductJsonLd product={product} />
       <div className="flex flex-col lg:flex-row-reverse">
