@@ -30,11 +30,14 @@ export function ProductGrid({
   products,
   variant = "default",
   animate = false,
+  keepOrder = false,
 }: {
   products: WCProduct[];
   variant?: Variant;
   /** Tarjetas con entrada animada (la tienda al filtrar). */
   animate?: boolean;
+  /** Respetar el orden recibido en vez de ordenar por tipo (p. ej. «You may also like»). */
+  keepOrder?: boolean;
 }) {
   if (products.length === 0) {
     return (
@@ -45,8 +48,9 @@ export function ProductGrid({
   }
 
   // Por tipo (ropa, accesorios, mugs y prints: lib/navigation.ts), salvo «Featured» de la
-  // home, que sale en el orden elegido a mano en WordPress («Web tatsmood»).
-  const ordered = variant === "featured" ? products : sortProductsByType(products);
+  // home, que sale en el orden elegido a mano en WordPress («Web tatsmood»), y los grids que
+  // piden mantener su orden (keepOrder).
+  const ordered = variant === "featured" || keepOrder ? products : sortProductsByType(products);
   const cards = ordered.map((p, i) => <ProductCard key={p.id} product={p} appearOrder={animate ? i : undefined} />);
 
   // Las variantes que en móvil son carrusel horizontal bloquean el eje del gesto.

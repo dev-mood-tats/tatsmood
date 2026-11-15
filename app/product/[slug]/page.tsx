@@ -4,11 +4,12 @@ import { AddToCartForm } from "@/components/AddToCartForm";
 import { Price } from "@/components/Price";
 import { ProductAccordion } from "@/components/ProductAccordion";
 import { ProductMainImages, ProductShootImages } from "@/components/ProductGallery";
-import { ProductGrid } from "@/components/ProductGrid";
+import { RelatedProductsGrid } from "@/components/RelatedProducts";
 import { ProductPageSkeleton } from "@/components/ProductPageSkeleton";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { getAllProductSlugs, getProductBySlug, getProductVariations, getProducts, getProductsInOrder } from "@/lib/woocommerce/catalog";
 import { getCollections } from "@/lib/wordpress/content";
+import type { WCProduct } from "@/lib/woocommerce/types";
 import { sortProductsByType } from "@/lib/navigation";
 import { pageMetadata, plainText, siteUrl } from "@/lib/seo";
 
@@ -63,10 +64,11 @@ export async function generateStaticParams() {
 }
 
 /**
- * «You may also like»: siempre 4 productos (si hay). Primero los de la misma colección que
- * el producto actual (p. ej. el resto de Gracias* Deluxe); si no llegan a 4, se completan
- * con los de la misma categoría, los relacionados de WooCommerce y el resto del catálogo.
- * Se muestran ordenados por tipo (ropa primero), como el resto de grids (lib/navigation.ts).
+ * «You may also like»: 4 productos en orden aleatorio (components/RelatedProducts.tsx).
+ * Primero los de la misma colección que el producto actual (p. ej. el resto de Gracias*
+ * Deluxe) y, si no llegan a 4, otros del catálogo: los de la misma categoría, los
+ * relacionados de WooCommerce y el resto. Se mandan como mucho 16 «otros» para que la
+ * página no pese de más; el navegador mezcla cada grupo y elige.
  */
 async function RelatedProducts({ productId, categoryId, ids }: { productId: number; categoryId?: number; ids: number[] }) {
   const collections = await getCollections().catch(() => []);
@@ -81,19 +83,14 @@ async function RelatedProducts({ productId, categoryId, ids }: { productId: numb
     getProducts({ perPage: 100 }).catch(() => []),
   ]);
   const seen = new Set([productId]);
-  const products = [
-    ...sortProductsByType(sameCollection),
-    ...sameCategory,
-    ...related,
-    ...sortProductsByType(catalog),
-  ]
-    .filter((p) => !seen.has(p.id) && seen.add(p.id))
-    .slice(0, 4);
-  if (products.length === 0) return null;
+  const fresh = (p: WCProduct) => !seen.has(p.id) && !!seen.add(p.id);
+  const collection = sameCollection.filter(fresh);
+  const others = [...sameCategory, ...related, ...sortProductsByType(catalog)].filter(fresh).slice(0, 16);
+  if (collection.length + others.length === 0) return null;
   return (
     <section className="mt-24 px-5 lg:px-[15px] lg:mt-[180px]">
       <h2 className="reveal mb-6">You may also like</h2>
-      <ProductGrid products={products} variant="related" />
+      <RelatedProductsGrid collection={collection} others={others} />
     </section>
   );
 }
