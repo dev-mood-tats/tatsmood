@@ -50,8 +50,16 @@
   list-style: decimal;
   padding-left: 1.25rem;
 }
+/* Enlaces dentro del texto de las páginas (términos, privacidad…): sin subrayado, como el
+   resto de la web; con ratón, bajan de opacidad al pasar por encima. */
 .wp-page a {
-  text-decoration: underline;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+@media (hover: hover) {
+  .wp-page a:hover {
+    opacity: 0.6;
+  }
 }
 .wp-page strong {
   font-weight: 600;
