@@ -146,3 +146,20 @@ html {
 [class*="hover:opacity-60"].is-pressed {
   animation: press-flash-fade 0.45s ease-out;
 }
+
+/* Autorrelleno de formularios: sin el fondo amarillo o azul del navegador (Chrome, Safari, Edge,
+   Firefox). El texto mantiene el color de la web. */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  box-shadow: 0 0 0 1000px var(--background) inset;
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input:autofill,
+textarea:autofill,
+select:autofill {
+  box-shadow: 0 0 0 1000px var(--background) inset;
+  filter: none;
+}
