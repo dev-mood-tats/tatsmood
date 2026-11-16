@@ -20,6 +20,19 @@ import type { Cart, CartItem } from "@/lib/store-api";
 import { IconClose, IconMinus, IconPlus } from "./Icons";
 import { lockPageScroll } from "@/lib/scroll-lock";
 
+/**
+ * Foto de cada producto en el carrito: la primera que se ha enseñado. Al añadir, la línea
+ * provisional lleva la foto pequeña del producto y la de WooCommerce llega después con otra
+ * dirección (su miniatura); sin esto la foto se cambiaba y se veía un parpadeo.
+ */
+const imageByProduct = new Map<number, string>();
+function cartImage(item: { productId: number; image: string | null }): string | null {
+  const seen = imageByProduct.get(item.productId);
+  if (seen) return seen;
+  if (item.image) imageByProduct.set(item.productId, item.image);
+  return item.image;
+}
+
 /** Abre el carrito lateral desde cualquier parte (p. ej. al añadir un producto). */
 export function openCart() {
   setCartOpen(true);
@@ -156,15 +169,25 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
                       {cart.items.map((item) => {
                         const atMax = item.maxQuantity !== null && item.quantity >= item.maxQuantity;
                         return (
-                          <li key={item.key} className="flex gap-4 py-4">
+                          <li
+                            // Por producto y no por la clave de la línea: la línea provisional (al
+                            // añadir) y la real de WooCommerce son la misma fila y su foto no se vuelve
+                            // a cargar. Si un mismo producto sale en dos líneas, cada una con su clave.
+                            key={
+                              cart.items.filter((i) => i.productId === item.productId).length > 1
+                                ? item.key
+                                : `p-${item.productId}`
+                            }
+                            className="flex gap-4 py-4"
+                          >
                             <Link
                               href={`/product/${item.slug}`}
                               onClick={close}
                               className="relative aspect-[4/5] w-24 shrink-0 self-start overflow-hidden lg:w-[120px]"
                             >
-                              {item.image && (
+                              {cartImage(item) && (
                                 <WPImage
-                                  src={item.image}
+                                  src={cartImage(item)!}
                                   alt={item.name}
                                   className="object-cover"
                                 />
