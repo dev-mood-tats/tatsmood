@@ -19,6 +19,11 @@ if (typeof window !== "undefined") {
 export function ScrollToTop({ id }: { id: string }) {
   useLayoutEffect(() => {
     if (performance.now() - lastPopState < 1000) return;
+    // Ya arriba: no se toca. En Safari del iPhone, mover el scroll por código mientras la página
+    // aún está cargando (y el usuario ya está tocando, p. ej. una talla y «Add to cart») dejaba
+    // descolocado todo lo fijo en pantalla: el carrito lateral salía despegado de arriba hasta
+    // recargar. Solo se sube si de verdad hace falta.
+    if (window.scrollY === 0 && window.scrollX === 0) return;
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [id]);
   return null;
