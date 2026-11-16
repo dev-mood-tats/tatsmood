@@ -3,6 +3,7 @@
 import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { setCartItemQuantityRequest } from "@/lib/cart-client";
 import {
@@ -93,6 +94,24 @@ export function CartDrawer({ cart: initialCart }: { cart: Cart | null }) {
   const cart = storeCart ?? initialCart;
   const open = useSyncExternalStore(subscribeCart, getOpenSnapshot, () => false);
   const close = () => setCartOpen(false);
+
+  // «Atrás» / «Adelante» del navegador: el carrito se cierra. También al cambiar de página y al
+  // volver con «Atrás» desde el checkout de WordPress (Safari y Chrome restauran la página tal
+  // cual estaba, con el carrito abierto).
+  const pathname = usePathname();
+  useEffect(() => {
+    setCartOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    const onHistory = () => setCartOpen(false);
+    const onShow = (e: PageTransitionEvent) => e.persisted && setCartOpen(false);
+    window.addEventListener("popstate", onHistory);
+    window.addEventListener("pageshow", onShow);
+    return () => {
+      window.removeEventListener("popstate", onHistory);
+      window.removeEventListener("pageshow", onShow);
+    };
+  }, []);
   // El panel se pinta en <body> (portal) para que la cabecera fija no lo recorte.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
