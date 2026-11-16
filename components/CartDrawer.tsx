@@ -4,7 +4,7 @@ import { WPImage } from "@/components/WPImage";
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { setCartItemQuantityAction } from "@/lib/actions/cart";
+import { setCartItemQuantityRequest } from "@/lib/cart-client";
 import {
   getCartSnapshot,
   getOpenSnapshot,
@@ -48,7 +48,7 @@ function changeQuantity(item: CartItem, quantity: number) {
       // Se resuelve al llegarle el turno en la cola (la línea puede ser recién añadida).
       const key = resolveItemKey(item);
       if (!key) return { status: "error" as const, message: "The cart could not be updated." };
-      return setCartItemQuantityAction(key, quantity);
+      return setCartItemQuantityRequest(key, quantity);
     },
   );
 }

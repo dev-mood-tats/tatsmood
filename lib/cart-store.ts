@@ -1,7 +1,8 @@
 "use client";
 
 import type { Cart, CartItem } from "@/lib/store-api";
-import { addToCartAction, type CartActionState } from "@/lib/actions/cart";
+import type { CartActionState } from "@/lib/actions/cart";
+import { addToCartRequest } from "@/lib/cart-client";
 
 // Estado del carrito en el navegador, compartido por la cabecera, el carrito lateral y
 // los botones de añadir. El servidor da el carrito inicial; a partir de ahí cada cambio:
@@ -147,12 +148,9 @@ export function resolveItemKey(item: CartItem): string | null {
  * él dentro (para que antes se vea el destello del botón pulsado).
  */
 export function addToCart(p: OptimisticProduct) {
-  const formData = new FormData();
-  formData.set("productId", String(p.productId));
-  formData.set("quantity", "1");
   const job = mutateCart(
     (cart) => withAddedProduct(cart, p),
-    () => addToCartAction({ status: "idle", message: "" }, formData),
+    () => addToCartRequest(p.productId, 1),
   );
   window.setTimeout(() => setCartOpen(true), 500);
   return job;

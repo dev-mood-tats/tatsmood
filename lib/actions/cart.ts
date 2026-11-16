@@ -15,8 +15,27 @@ export type CartActionState = { status: "idle" | "success" | "error"; message: s
 
 const publicCart = (cart: Cart): Cart => ({ ...cart, token: null });
 
+/**
+ * El Cart-Token de WooCommerce es un JWT que se vuelve a firmar en cada respuesta (cambia la
+ * caducidad), aunque el carrito sea el mismo. Comparando el texto, la cookie se reescribía en
+ * cada cambio del carrito. Se compara el carrito (user_id del JWT). (Igual que en Cousas.)
+ */
+function cartSessionId(token: string | null): string | null {
+  const payload = token?.split(".")[1];
+  if (!payload) return null;
+  try {
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as { user_id?: unknown };
+    return data.user_id != null ? String(data.user_id) : null;
+  } catch {
+    return null;
+  }
+}
+
 async function saveTokenIfChanged(current: string | null, cart: Cart) {
-  if (cart.token && cart.token !== current) await setCartToken(cart.token);
+  if (!cart.token || cart.token === current) return;
+  const before = cartSessionId(current);
+  if (before && before === cartSessionId(cart.token)) return; // el mismo carrito: no hace falta
+  await setCartToken(cart.token);
 }
 
 export async function addToCartAction(_prev: CartActionState, formData: FormData): Promise<CartActionState> {
