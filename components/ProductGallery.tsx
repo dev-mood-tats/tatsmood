@@ -18,9 +18,16 @@ export function ProductMainImages({ images, name }: { images: WCImage[]; name: s
     // En móvil, como en la web real, es un carrusel horizontal (una foto por pantalla) que
     // se recorta en los márgenes laterales: la siguiente foto no asoma por la derecha.
     // En escritorio, una debajo de otra.
-    <HScroll indicator="mx-5 lg:hidden" className="mx-5 flex gap-[15px] overflow-x-auto [scrollbar-width:none] lg:mx-0 lg:block lg:space-y-[15px] lg:overflow-visible">
+    // Sin inercia: cada gesto pasa exactamente una foto (snap-mandatory + snap-always) y no
+    // rebota en los extremos (native={false}). El resto de carruseles de la web tienen el
+    // scroll nativo del móvil.
+    <HScroll
+      native={false}
+      indicator="mx-5 lg:hidden"
+      className="mx-5 flex snap-x snap-mandatory gap-[15px] overflow-x-auto [scrollbar-width:none] lg:mx-0 lg:block lg:snap-none lg:space-y-[15px] lg:overflow-visible"
+    >
       {images.map((img, i) => (
-        <div key={`${img.id}-${i}`} className="relative aspect-[4/5] w-full shrink-0 overflow-hidden">
+        <div key={`${img.id}-${i}`} className="relative aspect-[4/5] w-full shrink-0 snap-start snap-always overflow-hidden">
           <WPImage
             src={img.src}
             srcSet={img.srcset}

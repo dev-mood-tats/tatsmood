@@ -6,7 +6,6 @@ import { ProductAccordion } from "@/components/ProductAccordion";
 import { ProductMainImages, ProductShootImages } from "@/components/ProductGallery";
 import { RelatedProductsGrid } from "@/components/RelatedProducts";
 import { ProductPageSkeleton } from "@/components/ProductPageSkeleton";
-import { ScrollToTop } from "@/components/ScrollToTop";
 import { getAllProductSlugs, getProductBySlug, getProductVariations, getProducts, getProductsInOrder } from "@/lib/woocommerce/catalog";
 import { getCollections } from "@/lib/wordpress/content";
 import type { WCProduct } from "@/lib/woocommerce/types";
@@ -107,7 +106,6 @@ async function ProductContent({ params }: { params: Promise<{ slug: string }> })
 
   return (
     <div className="pb-20 lg:-mt-16">
-      <ScrollToTop id={product.slug} />
       <ProductJsonLd product={product} />
       <div className="flex flex-col lg:flex-row-reverse">
         <div className="lg:w-2/3">

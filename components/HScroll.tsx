@@ -12,11 +12,18 @@ export function HScroll({
   className,
   children,
   indicator,
+  native = true,
 }: {
   className?: string;
   children: React.ReactNode;
   /** Clases de la barra de scroll que se pinta debajo (p. ej. "mx-5 lg:hidden"). Sin ella, no hay barra. */
   indicator?: string;
+  /**
+   * Scroll nativo del móvil: inercia al soltar y rebote («estirar») en los extremos. Es lo
+   * normal en toda la web. Con false, sin rebote en los extremos (la galería de la ficha,
+   * que además va de foto en foto).
+   */
+  native?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   // Barra de scroll propia: qué parte del carrusel se ve (ancho) y dónde (posición), en %.
@@ -74,9 +81,9 @@ export function HScroll({
   }, []);
 
   const scroller = (
-    // overscroll-x-none: sin el efecto de «estirar» al llegar al principio o al final (dejaba
-    // un hueco en blanco junto a la primera o la última foto).
-    <div ref={ref} className={`overscroll-x-none ${className ?? ""}`}>
+    // Sin native: overscroll-x-none, sin el efecto de «estirar» al llegar al principio o al
+    // final (dejaría un hueco en blanco junto a la primera o la última foto).
+    <div ref={ref} className={`${native ? "" : "overscroll-x-none "}${className ?? ""}`}>
       {children}
     </div>
   );
